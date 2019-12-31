@@ -1,0 +1,4 @@
+env/
+audio/*
+lib/*
+src/__pycache__
