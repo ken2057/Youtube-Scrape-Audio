@@ -3,11 +3,26 @@ import urllib.parse
 from bs4 import BeautifulSoup as BS
 # ------------------------------------------------------------------------------
 from src.config import ID_REC
-from src.config import QUERY_URL
+from src.config import QUERY_URL, JSON_COOKIE_PATH
 # ------------------------------------------------------------------------------
 # headers when send request (get english only)
 header={'accept-language':'en;q=0.9'}
 
+# ------------------------------------------------------------------------------
+# COOKIE
+# try save cookie for better youtube video recommending
+# ------------------------------------------------------------------------------
+import pickle
+def save_cookies(requests_cookiejar, filename):
+    with open(filename, 'wb') as f:
+        pickle.dump(requests_cookiejar, f)
+
+def load_cookies(filename):
+    try:
+        with open(filename, 'rb') as f:
+            return pickle.load(f)
+    except:
+        return {}
 # ------------------------------------------------------------------------------
 # list str will be trim from string
 # ------------------------------------------------------------------------------
@@ -16,6 +31,8 @@ def listStrip(string):
     return str(string).strip(' \n\t\r')
 
 def isValidSong(song):
+    if 'views' not in song:
+        song['views'] = '?'
     # min max 5 key
     if len(song) != 5:
         return None
@@ -40,7 +57,9 @@ def isValidSong(song):
 
 def singleSong(url):
     try:
-        page = requests.get(url, headers=header)
+        page = requests.get(url, headers=header, cookies=load_cookies(JSON_COOKIE_PATH))
+        save_cookies(page.cookies, JSON_COOKIE_PATH)
+
         soups = BS(page.content, 'html.parser').find(id=ID_REC).find_all('a')
         #
         order = ['title', 'time', 'channel', 'views']
@@ -49,7 +68,7 @@ def singleSong(url):
             content = {'url': a['href']}
             # zip to add to dict
             contentA = [listStrip(x.string) for x in a]
-            contentA = [x for x in contentA if x != '']
+            contentA = [x for x in contentA if x not in ['', 'Recommended for you']]
             for k, v in zip(order, contentA):
                 content[k] = listStrip(v)
             # check valid
@@ -74,8 +93,10 @@ def playlist(url):
 
 def fetchQuery(query):
     try:
-        query = QUERY_URL + urllib.parse.quote(query)
-        page = requests.get(query, headers=header)
+        url = QUERY_URL + urllib.parse.quote(query)
+        page = requests.get(url, headers=header, cookies=load_cookies(JSON_COOKIE_PATH))
+        save_cookies(page.cookies, JSON_COOKIE_PATH)
+
         soups = BS(page.text, 'lxml').body.find(class_='item-section').find_all(class_='yt-lockup-content')
         
         listContent = []

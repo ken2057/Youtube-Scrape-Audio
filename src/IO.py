@@ -1,9 +1,9 @@
-import json
+import json, os, glob
 # -----------------------------------------------------------------------------
 from src.config import JSON_NAME_PATH, JSON_FORMAT, JSON_PLAYLIST_PATH
-from src.config import JSON_MCONFIG_PATH, JSON_DOWNLOADED_PATH
+from src.config import JSON_MCONFIG_PATH, JSON_DOWNLOADED_PATH, DOWN_FOLDER
 # -----------------------------------------------------------------------------
-
+# default get list next song
 def readJson(path=JSON_NAME_PATH):
     with open(path, 'r', encoding='utf8') as j:
         return json.load(j)
@@ -21,3 +21,20 @@ def updateConfig(newData):
     data = readJson(JSON_MCONFIG_PATH)
     data.update(newData)
     writeJson(data, JSON_MCONFIG_PATH)
+
+def writeNext(string, path):
+    with open(path, 'a', encoding='utf8') as f:
+        f.writelines(string + '\n')
+
+def deleteAllSong():
+    files = glob.glob(DOWN_FOLDER+'/*')
+    if (len(files) == 0):
+        print('Nothing to delete')
+        return
+    print('Deleting '+str(len(files))+' in audio/')
+    for f in files:
+        os.remove(f)
+    writeJson([], JSON_DOWNLOADED_PATH)
+    # delete log
+    os.remove('error.txt')
+    print('Done')

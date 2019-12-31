@@ -2,3 +2,6 @@ env/
 audio/*
 lib/*
 src/__pycache__
+
+json/cookie.json
+error.txt
