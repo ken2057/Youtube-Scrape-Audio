@@ -6,10 +6,10 @@ QUERY_URL = 'https://www.youtube.com/results?search_query='
 ID_REC = 'watch7-sidebar-modules'
 
 # json save all the song have been clicked
-JSON_NAME_PATH = 'data/link.json'
-JSON_PLAYLIST_PATH = 'data/playlist.json'
-JSON_DOWNLOADED_PATH = 'data/downloaded.json'
-JSON_MCONFIG_PATH = 'music-config.json'
+JSON_NAME_PATH = 'json/link.json'
+JSON_PLAYLIST_PATH = 'json/playlist.json'
+JSON_DOWNLOADED_PATH = 'json/downloaded.json'
+JSON_MCONFIG_PATH = 'json/music-config.json'
 
 # json format
 JSON_FORMAT = ['url', 'title', 'time', 'channel', 'views']

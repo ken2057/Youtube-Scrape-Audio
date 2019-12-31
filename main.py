@@ -1,12 +1,12 @@
-import os, time, platform
+import os, time
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
-import threading
 # ------------------------------------------------------------------------------
 from src.IO import readJson, updateConfig, writeJson
 from src.CreateThread import download, fetchSong, newThread, thrSong, thrWriteJson
 from src.audio import downloadAudio, playSound, getSongId, Song, getSongId
 from src.config import JSON_DOWNLOADED_PATH, JSON_MCONFIG_PATH, DOWN_FOLDER
 from src.ScrapeYoutube import fetchQuery
+from src.formatPrint import clearScreen, printSongs, printHelp
 # ------------------------------------------------------------------------------
 URL = 'https://www.youtube.com/watch?v=dCdxj-3IrWM'
 URL_PLAYLIST = 'https://www.youtube.com/watch?v=qz7tCZE_3wA&list=RDqz7tCZE_3wA&start_radio=1'
@@ -23,12 +23,6 @@ result = []
 # ------------------------------------------------------------------------------
 # function
 # ------------------------------------------------------------------------------
-def clearScreen():
-    if platform.system() == 'Windows':
-        os.system('cls')
-    else:
-        os.system('clear')
-
 def playSong(songInput):
     global song
     # check song
@@ -41,18 +35,6 @@ def playSong(songInput):
     musicThread = thrSong(songInput, song)
     musicThread.start()
     time.sleep(1)
-
-def printSongs(listSong, page, totalPage):
-    # clearScreen()
-    print('-'*5)
-    for i, s in enumerate(listSong, 0):
-        print('- ID:', i)
-        print('- Name:', s['title'])
-        print('- Time:', s['time'])
-        print('- Channel:', s['channel'])
-        print('- Views:', s['views'])
-        print('-'*5)
-    print("Current page: %s/%s"%(page + 1, totalPage))
 
 def pause():
     song.pause = True
@@ -155,6 +137,9 @@ while True:
             # only get first 8
             result = fetchQuery(' '.join(i[1:]))[:8]
             printSongs(result, 0, 1)
+        # help
+        elif i[0] in ['h', 'help']:
+            printHelp()
         # final 
         elif i[0] != '':
             print('Command \'%s\' not found'%(i[0]))
