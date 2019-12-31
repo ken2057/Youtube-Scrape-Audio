@@ -53,6 +53,6 @@ def playSound(song):
         # write error to file
         lines = []
         lines.append('Time: ' + datetime.now().__str__())
-        line.append('Func: playSound')
+        lines.append('Func: playSound')
         lines.append('Error: ' + str(ex) + '\n')
         writeNext('\n'.join(lines), ERROR_PATH)
