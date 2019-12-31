@@ -12,20 +12,6 @@ def writeJson(data, path):
     with open(path, 'w', encoding='utf8') as j:
         json.dump(data, j, ensure_ascii=True)
 
-# only work for scrape web
-def writeFetchJson(listContent):
-    data = []
-    for content in listContent:
-        song = {}
-        for i, value in enumerate(JSON_FORMAT, 0):
-            # if value == 'time':
-            #     song[value] = content[i][2:]
-            # else:
-            song[value] = content[i].strip(' ')
-        data.append(song)
-    # write
-    writeJson(data, JSON_NAME_PATH)
-
 def writeDownloaded(song):
     listSong = readJson(JSON_DOWNLOADED_PATH)
     listSong.append(song)

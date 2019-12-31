@@ -2,10 +2,11 @@ import os, time, platform
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import threading
 # ------------------------------------------------------------------------------
-from src.IO import readJson, updateConfig
-from src.CreateThread import download, fetchSong, newThread, thrSong
-from src.audio import downloadAudio, playSound, getSongId, Song
-from src.config import JSON_DOWNLOADED_PATH, JSON_MCONFIG_PATH
+from src.IO import readJson, updateConfig, writeJson
+from src.CreateThread import download, fetchSong, newThread, thrSong, thrWriteJson
+from src.audio import downloadAudio, playSound, getSongId, Song, getSongId
+from src.config import JSON_DOWNLOADED_PATH, JSON_MCONFIG_PATH, DOWN_FOLDER
+from src.ScrapeYoutube import fetchQuery
 # ------------------------------------------------------------------------------
 URL = 'https://www.youtube.com/watch?v=dCdxj-3IrWM'
 URL_PLAYLIST = 'https://www.youtube.com/watch?v=qz7tCZE_3wA&list=RDqz7tCZE_3wA&start_radio=1'
@@ -18,6 +19,7 @@ song.stop = True
 musicThread = newThread()
 songs = readJson()[0:5]
 downs = readJson(JSON_DOWNLOADED_PATH)
+result = []
 # ------------------------------------------------------------------------------
 # function
 # ------------------------------------------------------------------------------
@@ -41,14 +43,14 @@ def playSong(songInput):
     time.sleep(1)
 
 def printSongs(listSong, page, totalPage):
-    clearScreen()
+    # clearScreen()
     print('-'*5)
     for i, s in enumerate(listSong, 0):
-        print('id: ', i)
-        print(s['title'])
-        print(s['time'])
-        print(s['channel'])
-        print(s['views'])
+        print('- ID:', i)
+        print('- Name:', s['title'])
+        print('- Time:', s['time'])
+        print('- Channel:', s['channel'])
+        print('- Views:', s['views'])
         print('-'*5)
     print("Current page: %s/%s"%(page + 1, totalPage))
 
@@ -61,6 +63,22 @@ def unpause():
     song.pause = False
     song.playing = True
     song.mixer.unpause()  
+
+def getDownload():
+    global downs
+    downs = readJson(JSON_DOWNLOADED_PATH)
+
+    # check file exist
+    # if not remove from json
+    oldLen = len(downs)
+    newDowns = []
+    for s in downs:
+        if os.path.exists(DOWN_FOLDER+'/'+getSongId(s['url'])+'.mp3'):
+            newDowns.append(s)
+    if len(downs) != len(newDowns):
+        writeJson(newDowns, JSON_DOWNLOADED_PATH)
+        downs = newDowns
+    printSongs(downs, 0, 1)
 # ------------------------------------------------------------------------------
 # RUNNING
 # ------------------------------------------------------------------------------
@@ -109,27 +127,37 @@ while True:
             # print format songs
             printSongs(songs, page, totalPage)
         # play song in list
-        elif i[0] == 'play':
+        elif i[0] in ['play', 'p']:
             if len(songs) != 0:
                 playSong(songs[int(i[1])])
             else:
                 print('Nothing to play')
         # play song downloaded
-        elif i[0] == 'playd':
+        elif i[0] in ['playd', 'pd']:
             if len(downs) != 0:
                 playSong(downs[int(i[1])])
+        # play song from result query
+        elif i[0] in ['plays', 'ps']:
+            if len(result) != 0:
+                playSong(result[int(i[1])])
+        # change volume
         elif i[0] == 'volume':
             if (len(i) == 1):
                 print('Volume: ', readJson(JSON_MCONFIG_PATH)['volume'])
             elif song.mixer != None:
                 updateConfig({'volume': float(i[1])})
                 song.mixer.set_volume(float(i[1]))
-        elif i[0] == 'downs':
-            downs = readJson(JSON_DOWNLOADED_PATH)
-            printSongs(downs, 0, 1)
+        # get downloaded list
+        elif i[0] in ['downs', 'd']:
+            getDownload()
+        # search
+        elif i[0] in ['s', 'search']:
+            # only get first 8
+            result = fetchQuery(' '.join(i[1:]))[:8]
+            printSongs(result, 0, 1)
         # final 
         elif i[0] != '':
-            print('Command \'%s\' not exists'%(i[0]))
+            print('Command \'%s\' not found'%(i[0]))
         
     except Exception as ex:
         print('error:', ex)

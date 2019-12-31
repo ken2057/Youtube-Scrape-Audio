@@ -1,5 +1,6 @@
 # base url
 BASE_URL = 'https://www.youtube.com'
+QUERY_URL = 'https://www.youtube.com/results?search_query='
 
 # id of element of youtube recommend
 ID_REC = 'watch7-sidebar-modules'

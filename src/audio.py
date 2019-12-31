@@ -9,6 +9,9 @@ from src.IO import writeDownloaded, readJson
 # https://blog.gregzaal.com/how-to-install-ffmpeg-on-windows/
 # https://ffmpeg.zeranoe.com/builds/
 
+def getSongId(url):
+    return url.replace('/watch?v=', '')
+
 def downloadAudio(song):
     songId = getSongId(song['url'])
     # check exists mp3
@@ -37,9 +40,6 @@ def playSound(songId, song):
         # play sound
         while song.mixer.get_busy():
             continue
-
-def getSongId(url):
-    return url.replace('/watch?v=', '')
 
 class Song():
     pause = False
