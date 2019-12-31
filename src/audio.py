@@ -1,15 +1,12 @@
 import youtube_dl, os, time, threading
+from datetime import datetime
 from pygame import mixer # audio player
 # ------------------------------------------------------------------------------
-from src.config import JSON_DOWNLOADED_PATH
+from src.config import JSON_DOWNLOADED_PATH, ERROR_PATH
 from src.config import DOWN_FOLDER, BASE_URL, ydl_opts
 from src.utils import getSongId
-from src.IO import writeDownloaded, readJson
-# from src.CreateThread import thrDownload
+from src.IO import writeDownloaded, readJson, writeNext
 # ------------------------------------------------------------------------------
-# http://builds.libav.org/windows/release-gpl/
-# https://blog.gregzaal.com/how-to-install-ffmpeg-on-windows/
-# https://ffmpeg.zeranoe.com/builds/
 
 def downloadAudio(song):
     songId = getSongId(song['url'])
@@ -41,13 +38,21 @@ def playSound(song):
     song.set_mixer()
     # start loop play event
     song.playing = True
-    while song.playing:
-        # add time played
-        while song.mixer.get_busy():
-            time.sleep(1)
-            song.down_next_song()
-        # when play finished change status, and play next song
-        if not song.pause and not song.edit:
-            song.finish_song()
-            song.next_song()
-            song.set_mixer()
+    try:
+        while song.playing:
+            # add time played
+            while song.mixer.get_busy():
+                    time.sleep(1)
+                    song.down_next_song()
+            # when play finished change status, and play next song
+            if not song.pause and not song.edit:
+                song.finish_song()
+                song.next_song()
+                song.set_mixer()
+    except Exception as ex:
+        # write error to file
+        lines = []
+        lines.append('Time: ' + datetime.now().__str__())
+        line.append('Func: playSound')
+        lines.append('Error: ' + str(ex) + '\n')
+        writeNext('\n'.join(lines), ERROR_PATH)

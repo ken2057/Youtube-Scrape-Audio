@@ -35,6 +35,10 @@ def deleteAllSong():
     for f in files:
         os.remove(f)
     writeJson([], JSON_DOWNLOADED_PATH)
+    writeJson([], JSON_NAME_PATH)
     # delete log
-    os.remove('error.txt')
+    try:
+        os.remove('error.txt')
+    except:
+        pass
     print('Done')

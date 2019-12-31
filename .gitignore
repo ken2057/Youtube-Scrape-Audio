@@ -1,6 +1,6 @@
 env/
 audio/*
-lib/*
+lib/
 src/__pycache__
 
 json/cookie.json

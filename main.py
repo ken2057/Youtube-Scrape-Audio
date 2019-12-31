@@ -184,7 +184,7 @@ while True:
                 continue
             if song.mixer != None:
                 song.mixer.unload()
-                song = Song()
+                song.reset_all()
             deleteAllSong()
         # final 
         elif i[0] != '':

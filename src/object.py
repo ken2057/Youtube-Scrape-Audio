@@ -1,4 +1,5 @@
 import copy
+from os import path
 # ------------------------------------------------------------------------------
 from src.audio import downloadAudio
 from src.CreateThread import thrDownload, thrFetchSong
@@ -54,10 +55,15 @@ class Song():
 		if skip:
 			downloadAudio(self.curSong)
 
+		mp3 = getPathMp3(self.curSong['url'])
 		# unlocad() can only use in pygame==2.0.0
 		# but not released => temp use pygame==2.0.0.dev6
-		self.mixer.unload() 
-		self.mixer.load(getPathMp3(self.curSong['url']))
+		self.mixer.unload()
+		# return before load if not exists
+		if not path.exists(mp3):
+			return
+
+		self.mixer.load(mp3)
 		self.mixer.set_volume(readJson(JSON_MCONFIG_PATH)['volume'])
 		self.mixer.play()
 		# pre-print, (lazy way)
@@ -97,8 +103,21 @@ class Song():
 		self.mixer.unpause()  
 
 	def select_nextSong(self):
+		if self.curSong == {}:
+			return
 		# select song different with prevSong
 		for song in readJson():
 			if self.prevSong == {} or song['url'] != self.prevSong['url']:
 				self.nextSong = song
 				break
+	
+	def reset_all(self):
+		self.playing = False
+		self.finish = False
+		self.pause = False
+		self.edit = False
+		self.mixer = None
+		self.skipped = 0
+		self.curSong = {}
+		self.nextSong = {}
+		self.prevSong = {}
