@@ -5,17 +5,20 @@
 # About
 ### I usually listen to music on Youtube, so I have an idea that to create a script scrape the YT HTML to get sound information and listen on it.
 ### All the song will be download at mp4 and convert to mp3 via ffmpeg, and stored in audio/ for listen later
+### All the result will come from Youtube
 ### Current only work with Windows. Other OS have error with open mp3 via pygame.mixer
+### Song length greater than or euqal 15 minutes will not showed
+### After playing 70% of current song, it will download next song
 <hr>
 
 # Dependences
-```js
+```json
 python3
 ffmpeg 
 youtube_dl (python)
 requests (python)
 beautifulsoup4 (python)
-pygame=2.0.0.dev6 (python) //I need 2.0.0 to use pygame.mixer.music.unload()
+pygame==2.0.0.dev6 (python) //I need 2.0.0 to use pygame.mixer.music.unload()
 ```
 <hr>
 
