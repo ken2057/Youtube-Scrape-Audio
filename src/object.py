@@ -116,8 +116,10 @@ class Song():
 		# select song different with prevSong
 		for song in readJson():
 			if self.prevSong == {} or song['url'] != self.prevSong['url']:
-				self.nextSong = song
-				break
+				# check currentSong and nextSong not same
+				if song['url'] != self.curSong['url']:
+					self.nextSong = song
+					break
 	
 	def reset_all(self):
 		self.isPlaying = False
