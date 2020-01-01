@@ -5,7 +5,7 @@ from src.audio import downloadAudio
 from src.CreateThread import thrDownload, thrFetchSong
 from src.IO import readJson
 from src.utils import calcTime, formatSeconds, getPathMp3
-from src.config import JSON_MCONFIG_PATH
+from src.config import JSON_MCONFIG_PATH, JSON_DOWNLOADED_PATH
 # ------------------------------------------------------------------------------
 class Song():
 	playing = False
@@ -106,6 +106,12 @@ class Song():
 	def select_nextSong(self):
 		if self.curSong == {}:
 			return
+		listSong = readJson()
+
+		# if recommend song empty, get from downloaded
+		if listSong == []:
+			listSong = readJson(JSON_DOWNLOADED_PATH)
+
 		# select song different with prevSong
 		for song in readJson():
 			if self.prevSong == {} or song['url'] != self.prevSong['url']:

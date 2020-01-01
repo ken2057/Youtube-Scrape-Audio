@@ -10,7 +10,7 @@ from src.IO import writeDownloaded, readJson, writeNext
 
 def downloadAudio(song):
     songId = getSongId(song['url'])
-    mp3 = DOWN_FOLDER + '/' + songId + '.wav'
+    mp3 = DOWN_FOLDER + '/' + songId + '.mp3'
     mp4 = DOWN_FOLDER + '/' + songId + '.mp4'
     # check exists mp3
     if os.path.exists(mp3):
