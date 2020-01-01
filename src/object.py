@@ -38,6 +38,7 @@ class Song():
 	def next_song(self):
 		self.prevSong = copy.copy(self.curSong)
 		self.curSong = copy.copy(self.nextSong)
+		self.nextSong = {}
 		self.isFinish = False
 		self.isPlaying = True
 		self.skipped = 0
