@@ -97,7 +97,7 @@ def fetchQuery(query):
         page = requests.get(url, headers=header, cookies=load_cookies(JSON_COOKIE_PATH))
         save_cookies(page.cookies, JSON_COOKIE_PATH)
 
-        soups = BS(page.text, 'lxml').body.find(class_='item-section').find_all(class_='yt-lockup-content')
+        soups = BS(page.text, 'html.parser').body.find(class_='item-section').find_all(class_='yt-lockup-content')
         
         listContent = []
         for a in soups:
