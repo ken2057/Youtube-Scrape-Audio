@@ -47,17 +47,21 @@ $ pip install -r requirements.txt
 ### Windows:
 ```js
 Download the verson depence on your computer and exact it
+Copy file ffmpeg.exe in bin/ from exacted folder into repo bin/
 Then add path bin/ to Windows path variable
-This app only need ffmpeg.exe in bin/ so you can delete other file for spaces
 
 If you are using win10 64bit
 You can go into bin/ and exact the file ffmpeg.7z
 And add path to Windows path varible
+
+In bin/ have ytsa.bat, it use to active script faster
 ```
 ## 5. Run
 ### Windows
 ```js
-$ python main.py
+$ python main.py // cmd need to cd into repo path
+
+$ ytsa // active script from any path
 ```
 
 <hr>

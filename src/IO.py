@@ -39,7 +39,7 @@ def deleteAllSong():
     writeJson([], JSON_NAME_PATH)
     # delete log
     try:
-        os.remove('error.txt')
+        os.remove(ERROR_PATH)
     except:
         pass
     print('Done')
