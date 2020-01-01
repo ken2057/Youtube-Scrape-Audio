@@ -28,11 +28,9 @@ def downloadAudio(song):
         writeDownloaded(song)
         # pre-print '$ ' after auto downoad (lazy way)
         if 'downloaded' in song:
-            print('$ ', end='')
-        return 'done'
+            print('\n$ ', end='')
     except Exception as ex:
         writeErrorLog(str(ex), 'audio.downloaodAudio')
-        return 'nok'
 
 def playSound(song):
     # create

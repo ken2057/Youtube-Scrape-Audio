@@ -63,7 +63,6 @@ class Song():
 		if not path.exists(mp3):
 			return
 
-		print(mp3)
 		self.mixer.load(mp3)
 		self.mixer.set_volume(readJson(JSON_MCONFIG_PATH)['volume'])
 		self.mixer.play()
