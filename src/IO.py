@@ -53,4 +53,4 @@ def writeErrorLog(error, function, data=None):
     note.append('Error: '+ str(error))
 
     writeNext('\n'.join(note) + '\n', ERROR_PATH)
-    print('\nError:', str(error)+'\n$ ')
+    print('\nerror:', str(error)+'\n$ ', end='')

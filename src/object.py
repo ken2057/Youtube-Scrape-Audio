@@ -74,6 +74,7 @@ class Song():
 		total = calcTime(self.curSong['time'])
 		# played 70% of the song, download next song
 		if 'downloaded' not in self.nextSong and self.mixer_get_pos() >= total * 0.7:
+			self.select_nextSong()
 			self.nextSong['downloaded'] = True
 			thrDownload(self.nextSong)
 			
@@ -103,8 +104,10 @@ class Song():
 		self.mixer.unpause()  
 
 	def select_nextSong(self):
-		if self.curSong == {}:
+		# current not playing any song or already have nextSong queue
+		if self.curSong == {} or self.nextSong != {}:
 			return
+		# read from json
 		listSong = readJson()
 		# if recommend song empty, get from downloaded
 		if listSong == []:
