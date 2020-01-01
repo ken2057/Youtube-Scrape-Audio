@@ -5,8 +5,7 @@
 # About
 ### I usually listen to music on Youtube, so I have an idea that to create a script scrape the YT HTML to get sound information and listen on it.
 ### All the song will be download at mp4 and convert to mp3 via ffmpeg, and stored in audio/ for listen later
-### 
-
+### Current only work with Windows. Other OS have error with open mp3 via pygame.mixer
 <hr>
 
 # Dependences
@@ -41,10 +40,6 @@ $ (env) D:\project\scrape-youtube-music> _
 ```js
 $ pip install -r requirements.txt
 ``` 
-### Linux
-```js
-$ pip3 install -r requirements.txt
-``` 
 ## 4. Get ffmpeg - [download link](https://ffmpeg.zeranoe.com/builds/)
 ### Windows:
 ```js
@@ -56,19 +51,10 @@ If you are using win10 64bit
 You can go into bin/ and exact the file ffmpeg.7z
 And add path to Windows path varible
 ```
-### Linux
-```js
-// Just need to use 
-$ sudo apt-get install ffmpeg
-```
 ## 5. Run
 ### Windows
 ```js
 $ python main.py
-```
-### Linux
-```js
-$ python3 main.py
 ```
 
 <hr>

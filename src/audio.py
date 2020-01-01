@@ -10,18 +10,20 @@ from src.IO import writeDownloaded, readJson, writeNext
 
 def downloadAudio(song):
     songId = getSongId(song['url'])
-    mp3 = DOWN_FOLDER + '/' + songId + '.mp3'
+    mp3 = DOWN_FOLDER + '/' + songId + '.wav'
     mp4 = DOWN_FOLDER + '/' + songId + '.mp4'
     # check exists mp3
     if os.path.exists(mp3):
         return 'mp3 exist'
-    # check exists mp4 for download
-    if not os.path.exists(mp4):
-        ydl_opts['outtmpl'] = mp4
-        # download mp4
-        print('\nDownloading:', song['title'])
-        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([BASE_URL + song['url']])
+    # check exists mp4 => delete
+    if os.path.exists(mp4):
+        os.remove(mp4)
+
+    ydl_opts['outtmpl'] = mp4
+    # download mp4
+    print('\nDownloading:', song['title'])
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([BASE_URL + song['url']])
 
     writeDownloaded(song)
     # pre-print '$ ' after auto downoad (lazy way)
