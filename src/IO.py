@@ -1,6 +1,7 @@
 import json, os, glob
+from datetime import datetime
 # -----------------------------------------------------------------------------
-from src.config import JSON_NAME_PATH, JSON_FORMAT, JSON_PLAYLIST_PATH
+from src.config import JSON_NAME_PATH, JSON_FORMAT, JSON_PLAYLIST_PATH, ERROR_PATH
 from src.config import JSON_MCONFIG_PATH, JSON_DOWNLOADED_PATH, DOWN_FOLDER
 # -----------------------------------------------------------------------------
 # default get list next song
@@ -42,3 +43,14 @@ def deleteAllSong():
     except:
         pass
     print('Done')
+
+def writeErrorLog(error, function, data=None):
+    note = []
+    note.append('Time: ' + datetime.now().__str__())
+    note.append('Func: ' + function)
+    if data != None:
+        note.append('Input: '+ data)
+    note.append('Error: '+ str(error))
+
+    writeNext('\n'.join(note) + '\n', ERROR_PATH)
+    print('\nError:', str(error)+'\n$ ')

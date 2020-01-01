@@ -2,10 +2,10 @@ import os, time
 from datetime import datetime
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 # ------------------------------------------------------------------------------
-from src.CreateThread import thrDownload, thrFetchSong, newThread, thrSong, thrWriteJson, thrWriteNext
-from src.formatPrint import clearScreen, printSongs, printHelp, printMusicStatus
+from src.CreateThread import thrDownload, thrFetchSong, newThread, thrSong, thrWriteJson
 from src.config import JSON_DOWNLOADED_PATH, JSON_MCONFIG_PATH, DOWN_FOLDER, ERROR_PATH
-from src.IO import readJson, updateConfig, writeJson, deleteAllSong
+from src.formatPrint import clearScreen, printSongs, printHelp, printMusicStatus
+from src.IO import readJson, updateConfig, writeJson, deleteAllSong, writeErrorLog
 from src.audio import downloadAudio, playSound
 from src.utils import getSongId
 from src.ScrapeYoutube import fetchQuery
@@ -40,8 +40,6 @@ def playSong(songInput):
     musicThread = thrSong(song)
     musicThread.daemon = True
     musicThread.start()
-    time.sleep(1)
-    song.nextSong = readJson()[0]
 
 def getDownload(page):
     global downs
@@ -86,7 +84,7 @@ while True:
             song.pause_song()
         # unpause
         # when 'unpause' or input is 'play' and while paUse
-        elif 'unpause' == i[0] or (len(i) == 1 and song.pause and i[0] == 'play'):
+        elif 'unpause' == i[0] or (len(i) == 1 and song.isPause and i[0] == 'play'):
             song.unpause_song()
         # play
         elif 'get' == i[0]:
@@ -162,14 +160,14 @@ while True:
                 print('Next song: None')
         # next song info
         elif i[0] in ['ni', 'nexti']:
-            if song.nextSong != {}:
+            if song.curSong != {}:
                 song.select_nextSong()
                 printSongs([song.nextSong], 0, 1, "Use 'next|n' to play")
             else:
                 print('Next song: None')
         # skip x seconds
         elif i[0] == 'skip':
-            if song.playing and song.is_skipable(int(i[1])):
+            if song.isPlaying and song.is_skipable(int(i[1])):
                 song.skip_time(int(i[1]))
             else:
                 print('Skip failed')
@@ -192,9 +190,4 @@ while True:
         
     except Exception as ex:
         print('error:', ex)
-        # write error to file
-        lines = []
-        lines.append('Time: ' + datetime.now().__str__())
-        lines.append("Input: '" + ' '.join(i) + "'")
-        lines.append('Error: ' + str(ex) + '\n')
-        thrWriteNext('\n'.join(lines), ERROR_PATH)
+        writeErrorLog(str(ex), 'main', ' '.join(i))

@@ -13,7 +13,7 @@ JSON_MCONFIG_PATH = 'json/music-config.json'
 JSON_COOKIE_PATH = 'json/cookie.json'
 
 # error file
-ERROR_PATH = 'error.txt'
+ERROR_PATH = 'error.log'
 
 # json format
 JSON_FORMAT = ['url', 'title', 'time', 'channel', 'views']

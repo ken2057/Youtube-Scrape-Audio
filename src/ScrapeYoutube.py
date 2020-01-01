@@ -2,8 +2,8 @@ import requests, sys
 import urllib.parse
 from bs4 import BeautifulSoup as BS
 # ------------------------------------------------------------------------------
-from src.config import ID_REC
-from src.config import QUERY_URL, JSON_COOKIE_PATH
+from src.config import ID_REC, QUERY_URL, JSON_COOKIE_PATH
+from src.IO import writeErrorLog
 # ------------------------------------------------------------------------------
 # headers when send request (get english only)
 header={'accept-language':'en;q=0.9'}
@@ -78,6 +78,7 @@ def singleSong(url):
         return listContent
     except Exception as ex:
         print('error get suggest song:',ex)
+        writeErrorLog(str(ex), 'ScrapeYoutube.singleSong')
         return []
 
 def playlist(url):
@@ -119,4 +120,5 @@ def fetchQuery(query):
 
     except Exception as ex:
         print('error query:',ex)
+        writeErrorLog(str(ex), 'ScrapeYoutube.fetchQuery')
         return []

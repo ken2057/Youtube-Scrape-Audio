@@ -8,10 +8,10 @@ from src.utils import calcTime, formatSeconds, getPathMp3
 from src.config import JSON_MCONFIG_PATH, JSON_DOWNLOADED_PATH
 # ------------------------------------------------------------------------------
 class Song():
-	playing = False
-	finish = False
-	pause = False
-	edit = False
+	isPlaying = False
+	isFinish = False
+	isPause = False
+	isEdit = False
 	mixer = None
 	skipped = 0
 	curSong = {}
@@ -29,17 +29,17 @@ class Song():
 		return self.mixer_get_pos() + second < calcTime(self.curSong['time'])
 	
 	def skip_time(self, second):
-		self.edit = True
+		self.isEdit = True
 		self.mixer.pause()
 		self.skipped += second
 		self.mixer.play(0, self.mixer_get_pos())
-		self.edit = False
+		self.isEdit = False
 
 	def next_song(self):
 		self.prevSong = copy.copy(self.curSong)
 		self.curSong = copy.copy(self.nextSong)
-		self.finish = False
-		self.playing = True
+		self.isFinish = False
+		self.isPlaying = True
 		self.skipped = 0
 		# select song different with prevSong
 		self.select_nextSong()
@@ -47,8 +47,8 @@ class Song():
 	
 	def finish_song(self):
 		self.skipped += 1 #missing 1s KEKW	
-		self.finish = True
-		self.playing = False
+		self.isFinish = True
+		self.isPlaying = False
 	
 	def set_mixer(self, skip=False):
 		# when use cmd 'skip', download next song
@@ -80,11 +80,11 @@ class Song():
 			
 	def __str__(self):
 		status = 'Loading'
-		if self.playing:
+		if self.isPlaying:
 			status = 'Playing'
-		elif self.pause:
+		elif self.isPause:
 			status = 'Pause'
-		elif self.finish:
+		elif self.isFinish:
 			status = 'Finished'
 		# format will be <current play time>/<total>
 		# format time will be mm:ss
@@ -94,24 +94,22 @@ class Song():
 		return status+' '+time+': '+ curSong
 	
 	def pause_song(self):
-		self.pause = True
-		self.playing = False
+		self.isPause = True
+		self.isPlaying = False
 		self.mixer.pause()
 	
 	def unpause_song(self):
-		self.pause = False
-		self.playing = True
+		self.isPause = False
+		self.isPlaying = True
 		self.mixer.unpause()  
 
 	def select_nextSong(self):
 		if self.curSong == {}:
 			return
 		listSong = readJson()
-
 		# if recommend song empty, get from downloaded
 		if listSong == []:
 			listSong = readJson(JSON_DOWNLOADED_PATH)
-
 		# select song different with prevSong
 		for song in readJson():
 			if self.prevSong == {} or song['url'] != self.prevSong['url']:
@@ -119,10 +117,10 @@ class Song():
 				break
 	
 	def reset_all(self):
-		self.playing = False
-		self.finish = False
-		self.pause = False
-		self.edit = False
+		self.isPlaying = False
+		self.isFinish = False
+		self.isPause = False
+		self.isEdit = False
 		self.mixer = None
 		self.skipped = 0
 		self.curSong = {}
