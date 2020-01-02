@@ -24,9 +24,10 @@ pygame==2.0.0.dev6 (python) //I need 2.0.0 to use pygame.mixer.music.unload()
 
 # Installation
 
-## - Clone repo
-## - Install Python3
+## 1. Clone repo
+## 2. Install Python3
 
+## 3. Install package, ffmpeg
 <details>
     <summary>Option 1: Using script</summary>
 <p>
@@ -72,9 +73,9 @@ Then extract it
 </p>
 </details>
 
-## - Add bin/ path to your Path Environment
+## 4. Add bin/ path to your Path Environment
 
-## - Run
+## 5. Run
 ```js
 $ python main.py // cmd need to cd into repo path
 or

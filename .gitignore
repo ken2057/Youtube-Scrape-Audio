@@ -6,3 +6,6 @@ src/__pycache__
 json/cookie.json
 error.txt
 error.log
+
+bin/ffmpeg.exe
+test.py
