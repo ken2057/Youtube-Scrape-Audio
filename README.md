@@ -23,8 +23,29 @@ pygame==2.0.0.dev6 (python) //I need 2.0.0 to use pygame.mixer.music.unload()
 <hr>
 
 # Installation
-## 1. Clone repo
-## 2. Install Python3
+
+## - Clone repo
+## - Install Python3
+
+<details>
+    <summary>Option 1: Using script</summary>
+<p>
+
+## - Double-click `install.bat`
+```js
+This script will do:
+    - Extract ffmpeg in bin/ base on your OS 32bit or 64bit
+    - Create virtualenv (optional)
+    - Install python package
+```
+
+</p>
+</details>
+
+<details>
+    <summary>Option 2: Install by yourself</summary>
+<p>
+
 ```js
 // This is optional
 use 'virtualenv' for easy delete later
@@ -36,31 +57,27 @@ $ virtualenv env
 $ env\Script\activate
 // If you command promt show (env) on the first, it worker
 // Example: 
-$ (env) D:\project\scrape-youtube-music> _
+$ (env) D:\project\youtube-scrape-audio> _
 ```
-## 3. Install python package
-### Windows
+## - Install python package
 ```js
 $ pip install -r requirements.txt
 ``` 
-## 4. Get ffmpeg - [download link](https://ffmpeg.zeranoe.com/builds/)
-### Windows:
+## - Extract ffmpeg in bin/
 ```js
-Download the verson depence on your computer and exact it
-Copy file ffmpeg.exe in bin/ from exacted folder into repo bin/
-Then add path bin/ to Windows path variable
-
-If you are using win10 64bit
-You can go into bin/ and exact the file ffmpeg.7z
-And add path to Windows path varible
-
-In bin/ have ytsa.bat, it use to active script faster
+Choose which version base on your OS 32/64bit
+Then extract it
 ```
-## 5. Run
-### Windows
+
+</p>
+</details>
+
+## - Add bin/ path to your Path Environment
+
+## - Run
 ```js
 $ python main.py // cmd need to cd into repo path
-
+or
 $ ytsa // active script from any path
 ```
 

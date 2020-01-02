@@ -54,6 +54,6 @@ def printHelp():
     print('$ cls|clear\t\t\t\t: Clear screen')
     print('$ help|h\t\t\t\t: Show this')
     print()
-    print('$ delete-all\t\t\t\t: Delete all the song in audio/')
+    print('$ delete-all\t\t\t\t: Delete all the song in audio/, and json file')
     print()
     print('$ exit\t\t\t\t\t: Surely is Exit')
