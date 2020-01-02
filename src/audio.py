@@ -1,5 +1,4 @@
-import youtube_dl, os, time, threading
-from datetime import datetime
+import youtube_dl, os
 from pygame import mixer # audio player
 # ------------------------------------------------------------------------------
 from src.config import DOWN_FOLDER, BASE_URL, ydl_opts
@@ -42,10 +41,8 @@ def playSound(song):
     song.isPlaying = True
     try:
         while song.isPlaying:
-            # add time played
             while song.mixer.get_busy():
-                    time.sleep(1)
-                    song.down_next_song()
+                song.down_next_song()
             # when play finished change status, and play next song
             if not song.isPause and not song.isEdit:
                 song.finish_song()

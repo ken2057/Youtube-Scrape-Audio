@@ -1,5 +1,4 @@
-import os, time
-from datetime import datetime
+import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 # ------------------------------------------------------------------------------
 from src.CreateThread import thrDownload, thrFetchSong, newThread, thrSong, thrWriteJson
@@ -154,8 +153,6 @@ while True:
             if song.nextSong != {}:
                 song.next_song()
                 song.set_mixer(skip=True)
-                time.sleep(1)
-                song.nextSong = readJson()[0]
             else:
                 print('Next song: None')
         # next song info
@@ -189,5 +186,4 @@ while True:
             print('Command \'%s\' not found'%(i[0]))
         
     except Exception as ex:
-        print('error:', ex)
         writeErrorLog(str(ex), 'main', ' '.join(i))

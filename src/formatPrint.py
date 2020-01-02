@@ -1,6 +1,5 @@
 import os, platform
 # ------------------------------------------------------------------------------
-from src.utils import formatSeconds
 from src.config import BASE_URL
 # ------------------------------------------------------------------------------
 def clearScreen():

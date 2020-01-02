@@ -2,7 +2,7 @@ import json, os, glob
 from datetime import datetime
 # -----------------------------------------------------------------------------
 from src.config import JSON_NAME_PATH, JSON_FORMAT, JSON_PLAYLIST_PATH, ERROR_PATH
-from src.config import JSON_MCONFIG_PATH, JSON_DOWNLOADED_PATH, DOWN_FOLDER
+from src.config import JSON_MCONFIG_PATH, JSON_DOWNLOADED_PATH, DOWN_FOLDER, JSON_COOKIE_PATH
 # -----------------------------------------------------------------------------
 # default get list next song
 def readJson(path=JSON_NAME_PATH):
@@ -42,6 +42,11 @@ def deleteAllSong():
         os.remove(ERROR_PATH)
     except:
         pass
+    # delete cookie
+    try:
+        os.remove(JSON_COOKIE_PATH)
+    except:
+        pass
     print('Done')
 
 def writeErrorLog(error, function, data=None):
@@ -53,4 +58,8 @@ def writeErrorLog(error, function, data=None):
     note.append('Error: '+ str(error))
 
     writeNext('\n'.join(note) + '\n', ERROR_PATH)
-    print('\nerror:', str(error)+'\n$ ', end='')
+
+    if (function != 'main'):
+        print('\nerror:', str(error)+'\n$ ', end='')
+    else:
+        print('\nerror:', str(error))

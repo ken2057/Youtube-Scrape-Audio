@@ -2,7 +2,7 @@ import threading
 # ------------------------------------------------------------------------------
 from src.ScrapeYoutube import singleSong
 from src.audio import downloadAudio, playSound
-from src.IO import writeJson, readJson, writeNext
+from src.IO import writeJson, writeNext
 from src.config import BASE_URL, JSON_NAME_PATH
 # ------------------------------------------------------------------------------
 # set daemon = True so when Ctrl+C it will kill all thread
