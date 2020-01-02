@@ -72,12 +72,14 @@ class Song():
 			print('\n\n'+self.__str__()+'\n$ ', end='')
 
 	def down_next_song(self):
-		total = calcTime(self.curSong['time'])
 		# played 70% of the song, download next song
-		if 'downloaded' not in self.nextSong and self.mixer_get_pos() >= total * 0.7:
-			self.select_nextSong()
-			self.nextSong['downloaded'] = True
-			thrDownload(self.nextSong)
+		if 'downloaded' not in self.nextSong:
+			# move down calcTime and if to reduce usage
+			total = calcTime(self.curSong['time'])
+			if self.mixer_get_pos() >= total * 0.7:
+				self.select_nextSong()
+				self.nextSong['downloaded'] = True
+				thrDownload(self.nextSong)
 			
 	def __str__(self):
 		status = 'Loading'
