@@ -24,6 +24,7 @@ musicThread = newThread()
 songs = readJson()[0:5]
 downs = readJson(JSON_DOWNLOADED_PATH)
 result = []
+last_cmd = None
 # ------------------------------------------------------------------------------
 # function
 # ------------------------------------------------------------------------------
@@ -40,8 +41,13 @@ def playSong(songInput):
     musicThread.daemon = True
     musicThread.start()
 
-def getDownload(page):
-    global downs
+def getDownload(input_):
+    global downs, last_cmd
+    try:
+        page = int(input_[1]) - 1
+    except:
+        page = 0
+
     downs = readJson(JSON_DOWNLOADED_PATH)
     # check file exist
     # if not remove from json
@@ -64,6 +70,58 @@ def getDownload(page):
     # 5 song each page
     downs = downs[page * 5: page * 5 + 5]
     printSongs(downs, page, int(m/5) + 1, "Use 'playd|pd <sID>' to play")
+    last_cmd = 'd'
+
+def recommend_song(input_):
+    global last_cmd, songs
+    try:
+        page = int(input_[1]) - 1
+    except:
+        page = 0
+    # read json
+    allSong = readJson()
+    # check when input page too low or high
+    totalPage = int(len(allSong) / 5)
+    if page < 0 or page > totalPage:
+        return
+    # renew songs
+    songs = allSong[page * 5: page * 5 + 5]
+    # print format songs
+    # add some note command
+    notes = []
+    notes.append("Use 'songs <page>' to change page")
+    notes.append("Use 'play|p <sID>' to play")
+    printSongs(songs, page, totalPage, '\n'.join(notes))
+    # save last cmd 'songs'
+    last_cmd = 'sg'
+
+def delete_all():
+    print('Delete all file in audio/')
+    # confirm delete
+    confirm = input('Confirm (yes/no): ')
+    if confirm.lower().strip(' \t') not in ['y', 'yes']:
+        return
+    if song.mixer != None:
+        song.mixer.unload()
+        song.reset_all()
+    deleteAllSong()
+
+def check_play(input_):
+    global last_cmd
+    
+    if last_cmd != None and len(input_) == 2:
+        play_cmd = {
+            'sg': songs,
+            'd': downs,
+            's': result
+        }
+        playSong(play_cmd[last_cmd][int(input_[1])])
+        last_cmd = None
+    elif len(input_) == 1 and song.isPause:
+            song.unpause_song()
+    else:
+        print('Nothing to play')
+        
 
 # ------------------------------------------------------------------------------
 # RUNNING
@@ -91,40 +149,21 @@ while True:
         # clear/cls
         elif i[0] in ['cls', 'clear']:
             clearScreen()
-        # list song
+        # getlist song recommended
         elif i[0] == 'songs':
-            try:
-                page = int(i[1]) - 1
-            except:
-                page = 0
-            # read json
-            allSong = readJson()
-            # check when input page too low or high
-            totalPage = int(len(allSong) / 5)
-            if page < 0 or page > totalPage:
-                continue
-            # renew songs
-            songs = allSong[page * 5: page * 5 + 5]
-            # print format songs
-            # add some note command
-            notes = []
-            notes.append("Use 'songs <page>' to change page")
-            notes.append("Use 'play|p <sID>' to play")
-            printSongs(songs, page, totalPage, '\n'.join(notes))
+            recommend_song(i)
+        # get downloaded list
+        elif i[0] in ['downs', 'd']:
+            getDownload(i)
+        # get search list
+        elif i[0] in ['s', 'search']:
+            # only get first 7
+            result = fetchQuery(' '.join(i[1:]))[:7]
+            printSongs(result, 0, 1, "Use 'plays|ps <sID>' to play")
+            last_cmd = 's'
         # play song in list
         elif i[0] in ['play', 'p']:
-            if len(songs) != 0:
-                playSong(songs[int(i[1])])
-            else:
-                print('Nothing to play')
-        # play song downloaded
-        elif i[0] in ['playd', 'pd']:
-            if len(downs) != 0:
-                playSong(downs[int(i[1])])
-        # play song from result query
-        elif i[0] in ['plays', 'ps']:
-            if len(result) != 0:
-                playSong(result[int(i[1])])
+            check_play(i)
         # change volume
         elif i[0] in ['volume', 'v']:
             if (len(i) == 1):
@@ -133,18 +172,6 @@ while True:
                 updateConfig({'volume': float(i[1]) / 100})
                 if song.mixer != None:
                     song.mixer.set_volume(float(i[1]) / 100)
-        # get downloaded list
-        elif i[0] in ['downs', 'd']:
-            try:
-                page = int(i[1]) - 1
-            except:
-                page = 0
-            getDownload(page)
-        # search
-        elif i[0] in ['s', 'search']:
-            # only get first 7
-            result = fetchQuery(' '.join(i[1:]))[:7]
-            printSongs(result, 0, 1, "Use 'plays|ps <sID>' to play")
         # help
         elif i[0] in ['h', 'help']:
             printHelp()
@@ -160,6 +187,7 @@ while True:
             if song.curSong != {}:
                 song.select_nextSong()
                 printSongs([song.nextSong], 0, 1, "Use 'next|n' to play")
+                last_cmd = None
             else:
                 print('Next song: None')
         # skip x seconds
@@ -171,16 +199,9 @@ while True:
         # current song info
         elif i[0] == 'info':
             printSongs([song.curSong], 0, 1)
+            last_cmd = None
         elif i[0] == 'delete-all':
-            print('Delete all file in audio/')
-            # confirm delete
-            confirm = input('Confirm (yes/no): ')
-            if confirm.lower().strip(' \t') not in ['y', 'yes']:
-                continue
-            if song.mixer != None:
-                song.mixer.unload()
-                song.reset_all()
-            deleteAllSong()
+            delete_all()
         # final 
         elif i[0] != '':
             print('Command \'%s\' not found'%(i[0]))

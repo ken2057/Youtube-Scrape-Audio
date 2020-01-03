@@ -88,13 +88,10 @@ $ ytsa // active script from any path
 ## All command
 ```
 $ downs|d <page>                    : Show downloaded song
-$ playd|pd <sID>                    : Play downloaded with sound ID in current page
-
 $ search|s <query>                  : Search song with query
-$ plays|ps <sID>                    : Play song from search list result with sID
-
 $ songs <page>                      : Show recommend song based on YT
-$ play|p <sID>                      : Play song from 'songs' current page
+
+$ play|p <sID>                      : Play song from 'songs/search/downs' current page
 
 $ next|n                            : Play next song
 $ nexti|ni                          : Play next song info
