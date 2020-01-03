@@ -33,9 +33,12 @@ ydl_opts = {
 }
 
 # CMD LIST
+# 'songs' and 'search' have same key 's'
+# but if input onyl 's' it will show 'songs'
+# if input have more than 1 word, it will show search
 CMD = {
-    'exit': ['exit'],
-    'pause': ['pause'],
+    'exit': ['exit', 'X'],
+    'pause': ['pause', 'P'],
     'unpause': ['unpause'],
     'clear': ['clear', 'cls'],
     'songs': ['songs', 's'],
@@ -48,5 +51,7 @@ CMD = {
     'next_info': ['nexti', 'ni', 'nextinfo'],
     'skip': ['skip'],
     'info': ['info', 'i'],
-    'delete_all': ['delete-all']
+    'delete_all': ['delete-all'],
+    'previous_info': ['previ'],
+    'previous': ['prev']
 }

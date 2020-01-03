@@ -69,7 +69,7 @@ def getDownload(input_):
         downs = newDowns
     # 5 song each page
     downs = downs[page * 5: page * 5 + 5]
-    printSongs(downs, page, int(m/5) + 1, "Use 'playd|pd <sID>' to play")
+    printSongs(downs, page, int(m/5) + 1, "Use 'play|p <sID>' to play")
     last_cmd = 'd'
 
 def recommend_song(input_):
@@ -134,7 +134,7 @@ while True:
     printMusicStatus(song)
     #
     i = input('$ ').strip(' ').split(' ')
-    i[0] = i[0].lower()
+    # i[0] = i[0].lower()
     try:
         # exit
         if i[0] in CMD['exit']:
@@ -164,7 +164,7 @@ while True:
         elif i[0] in CMD['search']:
             # only get first 7
             result = fetchQuery(' '.join(i[1:]))[:7]
-            printSongs(result, 0, 1, "Use 'plays|ps <sID>' to play")
+            printSongs(result, 0, 1, "Use 'play|p <sID>' to play")
             last_cmd = 's'
         # play song in list
         elif i[0] in CMD['play']:
@@ -182,11 +182,10 @@ while True:
             printHelp()
         # next song
         elif i[0] in CMD['next']:
-            if song.nextSong != {}:
-                song.next_song()
-                song.set_mixer(skip=True)
-            else:
-                print('Next song: None')
+            if song.nextSong == {}:
+                song.select_nextSong()
+            song.next_song()
+            song.set_mixer(skip=True)
         # next song info
         elif i[0] in CMD['next_info']:
             if song.curSong != {}:
@@ -205,8 +204,20 @@ while True:
         elif i[0] in CMD['info']:
             printSongs([song.curSong], 0, 1)
             last_cmd = None
+        # delete all json, include mp3 file
         elif i[0] in CMD['delete_all']:
             delete_all()
+        # previous song info
+        elif i[0] in CMD['previous_info']:
+            printSongs([song.prevSong], 0, 1, "Use 'prev' to play")
+            last_cmd = None
+        # play previous song
+        elif i[0] in CMD['previous']:
+            if song.prevSong != {}:
+                song.prev_song()
+                song.set_mixer(skip=True)
+            else:
+                print('Next song: None')
         # final 
         elif i[0] != '':
             print('Command \'%s\' not found'%(i[0]))

@@ -35,13 +35,17 @@ class Song():
 		self.mixer.play(0, self.mixer_get_pos())
 		self.isEdit = False
 
+	def prev_song(self):
+		self.nextSong = copy.copy(self.curSong)
+		self.curSong = copy.copy(self.prevSong)
+		self.prevSong = {}
+		self.reset_play_value()
+
 	def next_song(self):
 		self.prevSong = copy.copy(self.curSong)
 		self.curSong = copy.copy(self.nextSong)
 		self.nextSong = {}
-		self.isFinish = False
-		self.isPlaying = True
-		self.skipped = 0
+		self.reset_play_value()
 		# select song different with prevSong
 		self.select_nextSong()
 		thrFetchSong(self.curSong['url'])
@@ -123,6 +127,11 @@ class Song():
 					self.nextSong = song
 					break
 	
+	def reset_play_value(self):
+		self.isFinish = False
+		self.isPlaying = True
+		self.skipped = 0
+
 	def reset_all(self):
 		self.isPlaying = False
 		self.isFinish = False

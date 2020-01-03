@@ -94,7 +94,10 @@ $ songs <page>                      : Show recommend song based on YT
 $ play|p <sID>                      : Play song from 'songs/search/downs' current page
 
 $ next|n                            : Play next song
-$ nexti|ni                          : Play next song info
+$ nexti|ni                          : Show next song info
+
+$ prev                              : Play previous song
+$ previ                             : Show previous song info
 
 $ volume|v                          : Show current volume level
 $ volume|v <float>                  : Set volume level
