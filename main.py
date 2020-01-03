@@ -27,6 +27,8 @@ running = True
 # ------------------------------------------------------------------------------
 # function
 # ------------------------------------------------------------------------------
+
+# play song with songInput
 def playSong(songInput):
     global song
     # check song
@@ -40,7 +42,8 @@ def playSong(songInput):
     musicThread.daemon = True
     musicThread.start()
 
-def delete_all():
+# delete all mp3, json
+def _delete_all():
     print('Delete all file in audio/')
     # confirm delete
     confirm = input('Confirm (yes/no): ')
@@ -51,6 +54,7 @@ def delete_all():
         song.reset_all()
     deleteAllSong()
 
+# show song recommended by YT
 def _songs(input_):
     global last_cmd, songs
     try:
@@ -74,6 +78,7 @@ def _songs(input_):
     # save last cmd 'songs'
     last_cmd = 'sg'
 
+# show downoaded song
 def _downloaded(input_):
     global downs, last_cmd
     try:
@@ -105,6 +110,7 @@ def _downloaded(input_):
     printSongs(downs, page, int(m/5) + 1, "Use 'play|p <sID>' to play")
     last_cmd = 'd'
 
+# search song from scrape youtube
 def _search(string):
     global last_cmd, result
     # only get first 7
@@ -112,9 +118,9 @@ def _search(string):
     printSongs(result, 0, 1, "Use 'play|p <sID>' to play")
     last_cmd = 's'
 
+# play song in songs/search/downloaded current page
 def _play(input_):
     global last_cmd
-    
     # check last command used
     # if in ['songs', 'downs', 'search']
     # play song from that list
@@ -132,6 +138,8 @@ def _play(input_):
     else:
         print('Nothing to play')
 
+# show current volume
+# change volume with num
 def _volume(i):
     if (len(i) == 1):
         print("Volume:",str(round(float(readJson(JSON_MCONFIG_PATH)['volume']) * 100, 2))+'%')
@@ -140,12 +148,14 @@ def _volume(i):
         if song.mixer != None:
             song.mixer.set_volume(float(i[1]) / 100)
 
+# play next song
 def _next():
     if song.nextSong == {}:
         song.select_nextSong()
     song.next_song()
     song.set_mixer(skip=True)
 
+# show next song info
 def _next_info():
     global last_cmd
 
@@ -156,18 +166,21 @@ def _next_info():
     else:
         print('Next song: None')
 
+# skip num seconds of the song
 def _skip(num):
     if song.isPlaying and song.is_skipable(num):
         song.skip_time(num)
     else:
         print('Skip failed')
 
+# show current song info
 def _info():
     global last_cmd
 
     printSongs([song.curSong], 0, 1)
     last_cmd = None
 
+# shot previous info
 def _prev_info():
     global last_cmd
 
@@ -175,6 +188,7 @@ def _prev_info():
         printSongs([song.prevSong], 0, 1, "Use 'prev' to play")
         last_cmd = None
 
+# play previous song
 def _prev():
     if song.prevSong != {}:
         song.prev_song()
@@ -182,6 +196,7 @@ def _prev():
     else:
         print('Next song: None')
 
+# stop
 def _exit():
     global running
     running = False
@@ -195,17 +210,19 @@ def main(dict_cmd):
         printMusicStatus(song)
         i = input('$ ').strip(' ').split(' ')
         try:
+            # if input in array in CMD
+            # use that key of CMD to active function in dict_cmd
             for key in CMD:
                 if i[0] in CMD[key]:
                     dict_cmd[key](i)
                     break
             else:
                 print('Command \'%s\' not found'%(i[0]))
-            
         except Exception as ex:
             writeErrorLog(str(ex), 'main', ' '.join(i))
 
 if __name__ == '__main__':
+    # this dict match with config.CMD
     dict_cmd = {
         'exit': (lambda x: _exit()),
         'pause': (lambda x: song.pause_song()),
@@ -221,7 +238,7 @@ if __name__ == '__main__':
         'next_info': (lambda x: _next_info()),
         'skip': (lambda x: _skip(int(x[1]))),
         'info': (lambda x: _info()),
-        'delete_all': (lambda x: delete_all()),
+        'delete_all': (lambda x: _delete_all()),
         'previous_info': (lambda x: _prev_info()),
         'previous': (lambda x: _prev())
     }
