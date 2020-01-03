@@ -2,7 +2,7 @@ import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 # ------------------------------------------------------------------------------
 from src.CreateThread import thrDownload, thrFetchSong, newThread, thrSong, thrWriteJson
-from src.config import JSON_DOWNLOADED_PATH, JSON_MCONFIG_PATH, DOWN_FOLDER, ERROR_PATH
+from src.config import JSON_DOWNLOADED_PATH, JSON_MCONFIG_PATH, DOWN_FOLDER, ERROR_PATH, CMD
 from src.formatPrint import clearScreen, printSongs, printHelp, printMusicStatus
 from src.IO import readJson, updateConfig, writeJson, deleteAllSong, writeErrorLog
 from src.audio import downloadAudio, playSound
@@ -109,7 +109,10 @@ def delete_all():
 def check_play(input_):
     global last_cmd
     
-    if last_cmd != None and len(input_) == 2:
+    # check last command used
+    # if in ['songs', 'downs', 'search']
+    # play song from that list
+    if last_cmd != None and len(input_) > 1:
         play_cmd = {
             'sg': songs,
             'd': downs,
@@ -117,12 +120,12 @@ def check_play(input_):
         }
         playSong(play_cmd[last_cmd][int(input_[1])])
         last_cmd = None
+    # if pause => unpause
     elif len(input_) == 1 and song.isPause:
             song.unpause_song()
     else:
         print('Nothing to play')
         
-
 # ------------------------------------------------------------------------------
 # RUNNING
 # ------------------------------------------------------------------------------
@@ -134,38 +137,40 @@ while True:
     i[0] = i[0].lower()
     try:
         # exit
-        if 'exit' in i:
+        if i[0] in CMD['exit']:
             break
         # pause
-        elif 'pause' == i[0]:
+        elif i[0] in CMD['pause']:
             song.pause_song()
         # unpause
         # when 'unpause' or input is 'play' and while paUse
-        elif 'unpause' == i[0] or (len(i) == 1 and song.isPause and i[0] == 'play'):
+        elif i[0] in CMD['unpause']:
             song.unpause_song()
-        # play
-        elif 'get' == i[0]:
-            thrDownload(i[1])
+        # get
+        # elif 'get' == i[0]:
+        #     thrDownload(i[1])
         # clear/cls
-        elif i[0] in ['cls', 'clear']:
+        elif i[0] in CMD['clear']:
             clearScreen()
         # getlist song recommended
-        elif i[0] == 'songs':
+        # songs have 2 cmd 'songs', 's' 
+        # so if input only 1 's' it will run this either
+        elif i[0] in CMD['songs'] and len(i) == 1:
             recommend_song(i)
         # get downloaded list
-        elif i[0] in ['downs', 'd']:
+        elif i[0] in CMD['downloaded']:
             getDownload(i)
         # get search list
-        elif i[0] in ['s', 'search']:
+        elif i[0] in CMD['search']:
             # only get first 7
             result = fetchQuery(' '.join(i[1:]))[:7]
             printSongs(result, 0, 1, "Use 'plays|ps <sID>' to play")
             last_cmd = 's'
         # play song in list
-        elif i[0] in ['play', 'p']:
+        elif i[0] in CMD['play']:
             check_play(i)
         # change volume
-        elif i[0] in ['volume', 'v']:
+        elif i[0] in CMD['volume']:
             if (len(i) == 1):
                 print("Volume:",str(round(float(readJson(JSON_MCONFIG_PATH)['volume']) * 100, 2))+'%')
             else:
@@ -173,17 +178,17 @@ while True:
                 if song.mixer != None:
                     song.mixer.set_volume(float(i[1]) / 100)
         # help
-        elif i[0] in ['h', 'help']:
+        elif i[0] in CMD['help']:
             printHelp()
         # next song
-        elif i[0] in ['n', 'next']:
+        elif i[0] in CMD['next']:
             if song.nextSong != {}:
                 song.next_song()
                 song.set_mixer(skip=True)
             else:
                 print('Next song: None')
         # next song info
-        elif i[0] in ['ni', 'nexti']:
+        elif i[0] in CMD['next_info']:
             if song.curSong != {}:
                 song.select_nextSong()
                 printSongs([song.nextSong], 0, 1, "Use 'next|n' to play")
@@ -191,16 +196,16 @@ while True:
             else:
                 print('Next song: None')
         # skip x seconds
-        elif i[0] == 'skip':
+        elif i[0] in CMD['skip']:
             if song.isPlaying and song.is_skipable(int(i[1])):
                 song.skip_time(int(i[1]))
             else:
                 print('Skip failed')
         # current song info
-        elif i[0] == 'info':
+        elif i[0] in CMD['info']:
             printSongs([song.curSong], 0, 1)
             last_cmd = None
-        elif i[0] == 'delete-all':
+        elif i[0] in CMD['delete_all']:
             delete_all()
         # final 
         elif i[0] != '':

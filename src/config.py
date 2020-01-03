@@ -31,3 +31,22 @@ ydl_opts = {
         'preferredquality': '192'
     }],
 }
+
+# CMD LIST
+CMD = {
+    'exit': ['exit'],
+    'pause': ['pause'],
+    'unpause': ['unpause'],
+    'clear': ['clear', 'cls'],
+    'songs': ['songs', 's'],
+    'downloaded': ['downloaded', 'downs', 'd'],
+    'search': ['search', 's'],
+    'play': ['play', 'p'],
+    'volume': ['volume', 'v'],
+    'help': ['help', 'h'],
+    'next': ['next', 'n'],
+    'next_info': ['nexti', 'ni', 'nextinfo'],
+    'skip': ['skip'],
+    'info': ['info', 'i'],
+    'delete_all': ['delete-all']
+}
