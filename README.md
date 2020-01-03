@@ -115,12 +115,12 @@ $ exit                              : Surely is Exit
 ## Example
 ```js
 $ search can we kiss forever //it will get top 6 result from youtube
-$ plays 0                    // play first song from search result
+$ play 0                    // play first song from search result
 ```
 
 ```js
 $ downs       // check which song have been downloaded in audio/
-$ playd 0     // play song ID 0 in list downloaded
+$ play 1     // play song ID 1 in list downloaded
 ```
 ```js
 $ nexti       // display next song info

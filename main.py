@@ -183,7 +183,6 @@ def _info():
 # shot previous info
 def _prev_info():
     global last_cmd
-
     if song.prevSong != {}:
         printSongs([song.prevSong], 0, 1, "Use 'prev' to play")
         last_cmd = None
@@ -210,14 +209,15 @@ def main(dict_cmd):
         printMusicStatus(song)
         i = input('$ ').strip(' ').split(' ')
         try:
-            # if input in array in CMD
+            # if input in array of CMD
             # use that key of CMD to active function in dict_cmd
             for key in CMD:
                 if i[0] in CMD[key]:
                     dict_cmd[key](i)
                     break
             else:
-                print('Command \'%s\' not found'%(i[0]))
+                if i[0] != '':
+                    print('Command \'%s\' not found'%(i[0]))
         except Exception as ex:
             writeErrorLog(str(ex), 'main', ' '.join(i))
 

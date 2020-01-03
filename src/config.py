@@ -33,8 +33,6 @@ ydl_opts = {
 }
 
 # CMD LIST
-# 'songs' and 'search' have same key 's'
-# but if input onyl 's' it will show 'songs'
 # if input have more than 1 word, it will show search
 CMD = {
     'exit': ['exit', 'X'],
