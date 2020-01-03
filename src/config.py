@@ -41,7 +41,7 @@ CMD = {
     'pause': ['pause', 'P'],
     'unpause': ['unpause'],
     'clear': ['clear', 'cls'],
-    'songs': ['songs', 's'],
+    'songs': ['songs'],
     'downloaded': ['downloaded', 'downs', 'd'],
     'search': ['search', 's'],
     'play': ['play', 'p'],
