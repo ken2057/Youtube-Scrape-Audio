@@ -1,6 +1,6 @@
 
 # ------------------------------------------------------------------------------
-from src.config import DOWN_FOLDER
+
 # ------------------------------------------------------------------------------
 # get 4:12 turn to time useable
 def calcTime(time):
@@ -15,6 +15,3 @@ def formatSeconds(total):
 
 def getSongId(url):
     return url.replace('/watch?v=', '')
-
-def getPathMp3(url):
-    return DOWN_FOLDER+ '/' + getSongId(url) +  '.mp3'

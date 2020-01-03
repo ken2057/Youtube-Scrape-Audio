@@ -1,33 +1,48 @@
-import youtube_dl, os
+import os
+import youtube_dl
 from time import sleep
 from pygame import mixer # audio player
 # ------------------------------------------------------------------------------
 from src.config import DOWN_FOLDER, BASE_URL, ydl_opts
-from src.IO import writeDownloaded, writeErrorLog
-from src.utils import getSongId
+from src.io import writeDownloaded, writeErrorLog
+from src.utils import getSongId, formatSeconds
 # ------------------------------------------------------------------------------
 
 def downloadAudio(song):
     try:
-        songId = getSongId(song['url'])
-        mp3 = DOWN_FOLDER + '/' + songId + '.mp3'
-        mp4 = DOWN_FOLDER + '/' + songId + '.mp4'
-        # check exists mp3
-        if os.path.exists(mp3):
+        if 'path' in song and os.path.exists(song['path']):
             return 'mp3 exist'
+
+        songId = getSongId(song['url'])
+        mp4 = DOWN_FOLDER + song['title'] +'-'+ songId + '.mp4'
+        # check exists mp3
         # check exists mp4 => delete
         if os.path.exists(mp4):
             os.remove(mp4)
 
-        ydl_opts['outtmpl'] = mp4
+        # ydl_opts['outtmpl'] = DOWN_FOLDER + '/*'
         # download mp4
-        print('\nDownloading:', song['title'])
+        print('\nDownloading:', song['title'], end='')
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([BASE_URL + song['url']])
+            t = ydl.extract_info(BASE_URL + song['url'], True)
+
+            # info = {
+            #     'id': t['id'],
+            #     'channel': t['uploader'],
+            #     'title': t['title'],
+            #     'categories': t['categories'],
+            #     'url': t['webpage_url'],
+            #     'views': t['view_count'],
+            #     'time': formatSeconds(t['duration'])
+            # }
+
+            # get file name generate by ydl
+            name = '.'.join(ydl.prepare_filename(t).split('.')[:-1])
+            song['path'] = name + '.mp3'
 
         writeDownloaded(song)
         # pre-print '$ ' after auto downoad (lazy way)
-        if 'downloaded' in song:
+        if 'path' in song:
             print('\n$ ', end='')
     except Exception as ex:
         writeErrorLog(str(ex), 'audio.downloaodAudio')

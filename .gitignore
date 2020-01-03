@@ -3,8 +3,7 @@ audio/*
 lib/
 src/__pycache__
 
-json/cookie.json
-error.txt
+cookie.txt
 error.log
 
 bin/ffmpeg.exe

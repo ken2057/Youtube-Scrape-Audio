@@ -1,3 +1,6 @@
+# max song per list
+SONG_PER_LIST = 6
+
 # base url
 BASE_URL = 'https://www.youtube.com'
 QUERY_URL = 'https://www.youtube.com/results?search_query='
@@ -10,7 +13,9 @@ JSON_NAME_PATH = 'json/link.json'
 JSON_PLAYLIST_PATH = 'json/playlist.json'
 JSON_DOWNLOADED_PATH = 'json/downloaded.json'
 JSON_MCONFIG_PATH = 'json/music-config.json'
-JSON_COOKIE_PATH = 'json/cookie.json'
+
+# cookie for better recomend song
+COOKIE_PATH = 'cookie.txt'
 
 # error file
 ERROR_PATH = 'error.log'
@@ -19,17 +24,20 @@ ERROR_PATH = 'error.log'
 JSON_FORMAT = ['url', 'title', 'time', 'channel', 'views']
 
 # audio download folder
-DOWN_FOLDER = 'audio'
+DOWN_FOLDER = 'audio/'
 
 # download option
 ydl_opts = {
     'format': 'bestaudio/best',
     'noplaylist': True,
+    'outtmpl':  DOWN_FOLDER+'%(title)s-%(id)s.%(ext)s',
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
         'preferredcodec': 'mp3',
         'preferredquality': '192'
     }],
+    'cookiefile': COOKIE_PATH,
+    'quiet': True
 }
 
 # CMD LIST

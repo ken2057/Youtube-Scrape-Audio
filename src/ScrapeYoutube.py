@@ -1,28 +1,22 @@
-import requests, sys
+import sys
+import requests
 import urllib.parse
+from http import cookiejar
 from bs4 import BeautifulSoup as BS
 # ------------------------------------------------------------------------------
-from src.config import ID_REC, QUERY_URL, JSON_COOKIE_PATH
-from src.IO import writeErrorLog
+from src.config import ID_REC, QUERY_URL, COOKIE_PATH
+from src.io import writeErrorLog
 # ------------------------------------------------------------------------------
 # headers when send request (get english only)
 header={'accept-language':'en;q=0.9'}
 
-# ------------------------------------------------------------------------------
-# COOKIE
-# try save cookie for better youtube video recommending
-# ------------------------------------------------------------------------------
-import pickle
-def save_cookies(requests_cookiejar, filename):
-    with open(filename, 'wb') as f:
-        pickle.dump(requests_cookiejar, f)
-
-def load_cookies(filename):
+# cookie for better recommending
+def getCookie():
     try:
-        with open(filename, 'rb') as f:
-            return pickle.load(f)
+        return cookiejar.MozillaCookieJar(COOKIE_PATH).cookie.load()
     except:
-        return {}
+        return None
+
 # ------------------------------------------------------------------------------
 # list str will be trim from string
 # ------------------------------------------------------------------------------
@@ -57,10 +51,9 @@ def isValidSong(song):
 
 def singleSong(url):
     try:
-        page = requests.get(url, headers=header, cookies=load_cookies(JSON_COOKIE_PATH))
-        save_cookies(page.cookies, JSON_COOKIE_PATH)
+        r = requests.get(url, headers=header, cookies=getCookie())
 
-        soups = BS(page.content, 'html.parser').find(id=ID_REC).find_all('a')
+        soups = BS(r.content, 'html.parser').find(id=ID_REC).find_all('a')
         #
         order = ['title', 'time', 'channel', 'views']
         listContent = []
@@ -95,10 +88,9 @@ def playlist(url):
 def fetchQuery(query):
     try:
         url = QUERY_URL + urllib.parse.quote(query)
-        page = requests.get(url, headers=header, cookies=load_cookies(JSON_COOKIE_PATH))
-        save_cookies(page.cookies, JSON_COOKIE_PATH)
+        r = requests.get(url, headers=header, cookies=getCookie())
 
-        soups = BS(page.text, 'html.parser').body.find(class_='item-section').find_all(class_='yt-lockup-content')
+        soups = BS(r.text, 'html.parser').body.find(class_='item-section').find_all(class_='yt-lockup-content')
         
         listContent = []
         for a in soups:

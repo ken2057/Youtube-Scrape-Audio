@@ -2,24 +2,21 @@ import copy
 from os import path
 # ------------------------------------------------------------------------------
 from src.audio import downloadAudio
-from src.CreateThread import thrDownload, thrFetchSong
-from src.IO import readJson
-from src.utils import calcTime, formatSeconds, getPathMp3
+from src.createThread import thrDownload, thrFetchSong
+from src.io import readJson
+from src.utils import calcTime, formatSeconds
 from src.config import JSON_MCONFIG_PATH, JSON_DOWNLOADED_PATH
 # ------------------------------------------------------------------------------
 class Song():
+	curSong = {}
+	mixer = None
 	isPlaying = False
 	isFinish = False
 	isPause = False
 	isEdit = False
-	mixer = None
 	skipped = 0
-	curSong = {}
 	nextSong = {}
 	prevSong = {}
-
-	def __intit__(self):
-		pass
 
 	# millisecond to second + skipped time
 	def mixer_get_pos(self):
@@ -60,15 +57,13 @@ class Song():
 		if skip:
 			downloadAudio(self.curSong)
 
-		mp3 = getPathMp3(self.curSong['url'])
 		# unlocad() can only use in pygame==2.0.0
 		# but not released => temp use pygame==2.0.0.dev6
 		self.mixer.unload()
 		# return before load if not exists
-		if not path.exists(mp3):
+		if not path.exists(self.curSong['path']):
 			return
-
-		self.mixer.load(mp3)
+		self.mixer.load(self.curSong['path'])
 		self.mixer.set_volume(readJson(JSON_MCONFIG_PATH)['volume'])
 		self.mixer.play()
 		# pre-print, (lazy way)
@@ -77,12 +72,11 @@ class Song():
 
 	def down_next_song(self):
 		# played 70% of the song, download next song
-		if 'downloaded' not in self.nextSong:
+		if 'path' not in self.nextSong and self.nextSong == {}:
 			# move down calcTime and if to reduce usage
 			total = calcTime(self.curSong['time'])
 			if self.mixer_get_pos() >= total * 0.7:
 				self.select_nextSong()
-				self.nextSong['downloaded'] = True
 				thrDownload(self.nextSong)
 			
 	def __str__(self):

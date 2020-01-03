@@ -1,13 +1,13 @@
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 # ------------------------------------------------------------------------------
-from src.CreateThread import thrDownload, thrFetchSong, newThread, thrSong, thrWriteJson
-from src.config import JSON_DOWNLOADED_PATH, JSON_MCONFIG_PATH, DOWN_FOLDER, ERROR_PATH, CMD
+from src.createThread import thrDownload, thrFetchSong, newThread, thrSong, thrWriteJson
+from src.config import JSON_DOWNLOADED_PATH, JSON_MCONFIG_PATH, DOWN_FOLDER, ERROR_PATH, CMD, SONG_PER_LIST
 from src.formatPrint import clearScreen, printSongs, printHelp, printMusicStatus
-from src.IO import readJson, updateConfig, writeJson, deleteAllSong, writeErrorLog
+from src.io import readJson, updateConfig, writeJson, deleteAllSong, writeErrorLog, getInDownloaded
 from src.audio import downloadAudio, playSound
 from src.utils import getSongId
-from src.ScrapeYoutube import fetchQuery
+from src.scrapeYoutube import fetchQuery
 from src.object import Song
 # ------------------------------------------------------------------------------
 # TEMP
@@ -19,7 +19,7 @@ QUERY_URL = 'https://www.youtube.com/results?search_query=y%C3%AAu+ch%C3%A2u+d%C
 # Global Varible
 # ------------------------------------------------------------------------------
 song = Song()
-songs = readJson()[0:5]
+songs = readJson()[0:SONG_PER_LIST]
 downs = readJson(JSON_DOWNLOADED_PATH)
 result = []
 last_cmd = None
@@ -31,12 +31,14 @@ running = True
 # play song with songInput
 def playSong(songInput):
     global song
+    # check does downloaded
+    songInput = getInDownloaded(songInput)
     # check song
     downloadAudio(songInput)
     # fetch next songs from page
     thrFetchSong(songInput['url'])
     # start
-    song = Song()
+    song.reset_all()
     song.curSong = songInput
     musicThread = thrSong(song)
     musicThread.daemon = True
@@ -64,11 +66,11 @@ def _songs(input_):
     # read json
     allSong = readJson()
     # check when input page too low or high
-    totalPage = int(len(allSong) / 5) + 1
+    totalPage = int(len(allSong) / SONG_PER_LIST) + 1
     if page < 0 or page > totalPage:
         return
     # renew songs
-    songs = allSong[page * 5: page * 5 + 5]
+    songs = allSong[page * SONG_PER_LIST: page * SONG_PER_LIST + SONG_PER_LIST]
     # print format songs
     # add some note command
     notes = []
@@ -91,7 +93,7 @@ def _downloaded(input_):
     # if not remove from json
     newDowns = []
     for s in downs:
-        if os.path.exists(DOWN_FOLDER+'/'+getSongId(s['url'])+'.mp3'):
+        if os.path.exists(s['path']):
             newDowns.append(s)
 
     # check when page to low or high
@@ -105,9 +107,9 @@ def _downloaded(input_):
     if len(downs) != len(newDowns):
         writeJson(newDowns, JSON_DOWNLOADED_PATH)
         downs = newDowns
-    # 5 song each page
-    downs = downs[page * 5: page * 5 + 5]
-    printSongs(downs, page, int(m/5) + 1, "Use 'play|p <sID>' to play")
+    #  song each page
+    downs = downs[page * SONG_PER_LIST: page * SONG_PER_LIST + SONG_PER_LIST]
+    printSongs(downs, page, int(m/SONG_PER_LIST) + 1, "Use 'play|p <sID>' to play")
     last_cmd = 'd'
 
 # search song from scrape youtube
