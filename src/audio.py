@@ -38,7 +38,10 @@ def downloadAudio(song):
             # get file name generate by ydl
             name = '.'.join(ydl.prepare_filename(t).split('.')[:-1])
             song['path'] = name + '.mp3'
-
+        # remove status when fisnish download
+        if 'downloading' in song:
+            song.pop('downloading')
+        # write to download
         writeDownloaded(song)
         # pre-print '$ ' after auto downoad (lazy way)
         if 'path' in song:
