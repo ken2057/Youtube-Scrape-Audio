@@ -10,17 +10,16 @@ from src.utils import getSongId, formatSeconds
 
 def downloadAudio(song):
     try:
+        # check exists mp3
         if 'path' in song and os.path.exists(song['path']):
             return 'mp3 exist'
 
         songId = getSongId(song['url'])
         mp4 = DOWN_FOLDER + song['title'] +'-'+ songId + '.mp4'
-        # check exists mp3
         # check exists mp4 => delete
         if os.path.exists(mp4):
             os.remove(mp4)
 
-        # ydl_opts['outtmpl'] = DOWN_FOLDER + '/*'
         # download mp4
         print('\nDownloading:', song['title'], end='')
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:

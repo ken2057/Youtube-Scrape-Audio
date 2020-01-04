@@ -40,6 +40,11 @@ ydl_opts = {
     'quiet': True
 }
 
+# list error number will not print info
+ERRORS = [
+    '[Errno 11001]', # No internet: Failed to establish a new connection
+]
+
 # CMD LIST
 # if input have more than 1 word, it will show search
 CMD = {
@@ -59,5 +64,8 @@ CMD = {
     'info': ['info', 'i'],
     'delete_all': ['delete-all'],
     'previous_info': ['previ'],
-    'previous': ['prev']
+    'previous': ['prev'],
+    'play_downloaded': ['pd', 'playdowns', 'playdownloaded'],
+    'queue': ['queue', 'q'],
+    'queue_shuffle': ['qsf', 'qshuffle']
 }

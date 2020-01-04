@@ -25,7 +25,9 @@ def thrDownload(url):
     d.start()
 
 def thrFetchSong(url):
-    f = threading.Thread(target=writeJson, args=(singleSong(BASE_URL + url,), JSON_NAME_PATH,))
+    # f = threading.Thread(target=writeJson, args=(singleSong(BASE_URL + url,), JSON_NAME_PATH,))
+    # change function so thread don't need to wait result of singSong to execute writeJson
+    f = threading.Thread(target=singleSong, args=(BASE_URL + url, True,),) 
     f.daemon = True
     f.start()
 

@@ -4,8 +4,8 @@ import urllib.parse
 from http import cookiejar
 from bs4 import BeautifulSoup as BS
 # ------------------------------------------------------------------------------
-from src.config import ID_REC, QUERY_URL, COOKIE_PATH
-from src.io import writeErrorLog
+from src.config import ID_REC, QUERY_URL, COOKIE_PATH, JSON_NAME_PATH
+from src.io import writeErrorLog, writeJson
 # ------------------------------------------------------------------------------
 # headers when send request (get english only)
 header={'accept-language':'en;q=0.9'}
@@ -49,11 +49,12 @@ def isValidSong(song):
 
     return song
 
-def singleSong(url):
+def singleSong(url, write_file=False):
+    from datetime import datetime
     try:
         r = requests.get(url, headers=header, cookies=getCookie())
-
         soups = BS(r.content, 'html.parser').find(id=ID_REC).find_all('a')
+        
         #
         order = ['title', 'time', 'channel', 'views']
         listContent = []
@@ -61,29 +62,21 @@ def singleSong(url):
             content = {'url': a['href']}
             # zip to add to dict
             contentA = [listStrip(x.string) for x in a]
-            contentA = [x for x in contentA if x not in ['', 'Recommended for you']]
+            contentA = [x for x in contentA if x not in ['']] #'Recommended for you'
             for k, v in zip(order, contentA):
                 content[k] = listStrip(v)
             # check valid
             content = isValidSong(content)
             if content != None:
                 listContent.append(content)
-        return listContent
+        if not write_file:
+            return listContent
+        else:
+            # use this so thread will not need to wait reuslt of this function
+            writeJson(listContent, JSON_NAME_PATH)
     except Exception as ex:
-        print('error get suggest song:',ex)
         writeErrorLog(str(ex), 'ScrapeYoutube.singleSong')
         return []
-
-def playlist(url):
-    page = requests.get(url)
-    # soups = BS(page.content, 'html.parser').find(class_='watch-queue-items-container')
-    # , class_='yt-uix-scroller-scroll-unit'
-    # class_='playlist-video'
-    # .find(class_='playlist-items')
-
-    soups = BS(str(page.content).replace('\\n', '\n'), 'html.parser')
-
-    print(soups.prettify().replace('\\n', '\n').encode('utf-8'))
 
 def fetchQuery(query):
     try:
@@ -111,6 +104,16 @@ def fetchQuery(query):
         return listContent
 
     except Exception as ex:
-        print('error query:',ex)
         writeErrorLog(str(ex), 'ScrapeYoutube.fetchQuery')
         return []
+
+def playlist(url):
+    page = requests.get(url)
+    # soups = BS(page.content, 'html.parser').find(class_='watch-queue-items-container')
+    # , class_='yt-uix-scroller-scroll-unit'
+    # class_='playlist-video'
+    # .find(class_='playlist-items')
+
+    soups = BS(str(page.content).replace('\\n', '\n'), 'html.parser')
+
+    print(soups.prettify().replace('\\n', '\n').encode('utf-8'))

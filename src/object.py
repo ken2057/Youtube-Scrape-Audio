@@ -1,4 +1,5 @@
 import copy
+import random
 from os import path
 # ------------------------------------------------------------------------------
 from src.audio import downloadAudio
@@ -8,15 +9,19 @@ from src.utils import calcTime, formatSeconds
 from src.config import JSON_MCONFIG_PATH, JSON_DOWNLOADED_PATH
 # ------------------------------------------------------------------------------
 class Song():
-	curSong = {}
 	mixer = None
 	isPlaying = False
 	isFinish = False
 	isPause = False
 	isEdit = False
 	skipped = 0
+
+	curSong = {}
 	nextSong = {}
 	prevSong = {}
+	# list of song
+	queue = []
+	isShuffle = False
 
 	# millisecond to second + skipped time
 	def mixer_get_pos(self):
@@ -108,13 +113,21 @@ class Song():
 		# current not playing any song or already have nextSong queue
 		if self.curSong == {} or self.nextSong != {}:
 			return
+		# when have queue song, play until fisnish queue
+		if len(self.queue) != 0:
+			self.set_next_from_queue()
+			return
+
 		# read from json
 		listSong = readJson()
-		# if recommend song empty, get from downloaded
+		# if recommend song empty, make downloaded become a queue
 		if listSong == []:
-			listSong = readJson(JSON_DOWNLOADED_PATH)
+			self.queue = readJson(JSON_DOWNLOADED_PATH)
+			self.set_next_from_queue()
+			return
+
 		# select song different with prevSong
-		for song in readJson():
+		for song in listSong:
 			if self.prevSong == {} or song['url'] != self.prevSong['url']:
 				# check currentSong and nextSong not same
 				if song['url'] != self.curSong['url']:
@@ -136,3 +149,11 @@ class Song():
 		self.curSong = {}
 		self.nextSong = {}
 		self.prevSong = {}
+
+	def set_next_from_queue(self):
+		pos = 0
+		if self.isShuffle:
+			pos = random.randint(0, len(self.queue))
+			
+		self.nextSong = copy.copy(self.queue[pos])
+		self.queue.pop(pos)

@@ -93,6 +93,10 @@ $ songs <page>                      : Show recommend song based on YT
 
 $ play|p <sID>                      : Play song from 'songs/search/downs' current page
 
+$ playdowns|pd                      : Play all sone in downloaded
+$ queue|q                           : Show current queue
+$ qshuffle|qsf                      : Turn ON/OFF queue shuffle
+
 $ next|n                            : Play next song
 $ nexti|ni                          : Show next song info
 

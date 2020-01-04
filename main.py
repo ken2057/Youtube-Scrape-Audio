@@ -1,13 +1,13 @@
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 # ------------------------------------------------------------------------------
-from src.createThread import thrDownload, thrFetchSong, newThread, thrSong, thrWriteJson
+from src.io import readJson, updateConfig, writeJson, deleteAllSong, writeErrorLog, getInDownloaded, writeSongQueue
 from src.config import JSON_DOWNLOADED_PATH, JSON_MCONFIG_PATH, DOWN_FOLDER, ERROR_PATH, CMD, SONG_PER_LIST
+from src.createThread import thrDownload, thrFetchSong, newThread, thrSong, thrWriteJson
 from src.formatPrint import clearScreen, printSongs, printHelp, printMusicStatus
-from src.io import readJson, updateConfig, writeJson, deleteAllSong, writeErrorLog, getInDownloaded
 from src.audio import downloadAudio, playSound
-from src.utils import getSongId
 from src.scrapeYoutube import fetchQuery
+from src.utils import getSongId
 from src.object import Song
 # ------------------------------------------------------------------------------
 # TEMP
@@ -132,8 +132,10 @@ def _play(input_):
             'd': downs,
             's': result
         }
+        # play sone from other will stop queue
+        if song.queue != []:
+            song.queue = []
         playSong(play_cmd[last_cmd][int(input_[1])])
-        last_cmd = None
     # if pause => unpause
     elif len(input_) == 1 and song.isPause:
             song.unpause_song()
@@ -201,6 +203,26 @@ def _prev():
 def _exit():
     global running
     running = False
+
+# play all song in downloaded
+def _play_down():
+    songs = readJson(JSON_DOWNLOADED_PATH)
+    song.queue = songs[1:]
+    playSong(songs[0])
+
+# show queue
+def _queue():
+    if song.queue != []:
+        writeSongQueue(song)
+    else:
+        print('Nothing in queue')
+
+# turn on shuffle queue song
+def _queue_shuffle():
+    song.isShuffle = not song.isShuffle
+    _a = (lambda x: 'ON' if x else 'OFF')
+    print('Queue shuffle:', _a(song.isShuffle))
+
 # ------------------------------------------------------------------------------
 # RUNNING
 # ------------------------------------------------------------------------------
@@ -242,7 +264,10 @@ if __name__ == '__main__':
         'info': (lambda x: _info()),
         'delete_all': (lambda x: _delete_all()),
         'previous_info': (lambda x: _prev_info()),
-        'previous': (lambda x: _prev())
+        'previous': (lambda x: _prev()),
+        'play_downloaded': (lambda x: _play_down()),
+        'queue': (lambda x: _queue()),
+        'queue_shuffle': (lambda x: _queue_shuffle())
     }
 
     main(dict_cmd)
