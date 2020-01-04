@@ -1,21 +1,30 @@
-import json, os, glob
+from glob import glob
+from json import load, dump
+from os import remove
 from datetime import datetime
 # -----------------------------------------------------------------------------
-from src.config import JSON_NAME_PATH, JSON_FORMAT, JSON_PLAYLIST_PATH, ERROR_PATH, ERRORS
-from src.config import JSON_MCONFIG_PATH, JSON_DOWNLOADED_PATH, DOWN_FOLDER, COOKIE_PATH
+from src.config import (
+    JSON_DOWNLOADED_PATH, 
+    JSON_MCONFIG_PATH,
+    JSON_NAME_PATH, 
+    DOWN_FOLDER, 
+    COOKIE_PATH,
+    ERROR_PATH, 
+    ERROR_HIDE, 
+)
 # -----------------------------------------------------------------------------
 # READ
 # -----------------------------------------------------------------------------
 # default get list next song
 def readJson(path=JSON_NAME_PATH):
     with open(path, 'r', encoding='utf8') as j:
-        return json.load(j)
+        return load(j)
 # -----------------------------------------------------------------------------
 # WRITE
 # -----------------------------------------------------------------------------
 def writeJson(data, path):
     with open(path, 'w', encoding='utf8') as j:
-        json.dump(data, j, ensure_ascii=True)
+        dump(data, j, ensure_ascii=True)
 
 def writeDownloaded(song):
     listSong = readJson(JSON_DOWNLOADED_PATH)
@@ -38,7 +47,7 @@ def writeErrorLog(error, function, data=None):
     writeNext('\n'.join(note) + '\n', ERROR_PATH)
 
     # some error will not need to print out
-    if len([x for x in ERRORS if x in str(error)]) == 0:
+    if len([x for x in ERROR_HIDE if x in str(error)]) == 0:
         if (function != 'main'):
             print('\nerror:', str(error)+'\n$ ', end='')
         else:
@@ -59,23 +68,23 @@ def updateConfig(newData):
     writeJson(data, JSON_MCONFIG_PATH)
 
 def deleteAllSong():
-    files = glob.glob(DOWN_FOLDER+'/*')
+    files = glob(DOWN_FOLDER+'/*')
     if (len(files) == 0):
         print('Nothing to delete')
         return
     print('Deleting '+str(len(files))+' in audio/')
     for f in files:
-        os.remove(f)
+        remove(f)
     writeJson([], JSON_DOWNLOADED_PATH)
     writeJson([], JSON_NAME_PATH)
     # delete log
     try:
-        os.remove(ERROR_PATH)
+        remove(ERROR_PATH)
     except:
         pass
     # delete cookie
     try:
-        os.remove(COOKIE_PATH)
+        remove(COOKIE_PATH)
     except:
         pass
     print('Done')

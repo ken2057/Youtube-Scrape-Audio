@@ -1,13 +1,36 @@
-import os
-os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+from os import path, environ
+environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 # ------------------------------------------------------------------------------
-from src.io import readJson, updateConfig, writeJson, deleteAllSong, writeErrorLog, getInDownloaded, writeSongQueue
-from src.config import JSON_DOWNLOADED_PATH, JSON_MCONFIG_PATH, DOWN_FOLDER, ERROR_PATH, CMD, SONG_PER_LIST
-from src.createThread import thrDownload, thrFetchSong, newThread, thrSong, thrWriteJson
-from src.formatPrint import clearScreen, printSongs, printHelp, printMusicStatus
-from src.audio import downloadAudio, playSound
+from src.io import (
+    readJson, 
+    writeJson, 
+    updateConfig, 
+    deleteAllSong, 
+    writeErrorLog, 
+    getInDownloaded, 
+    writeSongQueue,
+)
+from src.config import (
+    JSON_DOWNLOADED_PATH, 
+    JSON_MCONFIG_PATH, 
+    DOWN_FOLDER, 
+    ERROR_PATH, CMD, 
+    SONG_PER_LIST,
+)
+from src.createThread import (
+    thrSong, 
+    thrFetchSong, 
+)
+from src.formatPrint import (
+    printHelp, 
+    printSongs, 
+    clearScreen, 
+    printMusicStatus,
+)
+from src.audio import (
+    downloadAudio, 
+)
 from src.scrapeYoutube import fetchQuery
-from src.utils import getSongId
 from src.object import Song
 # ------------------------------------------------------------------------------
 # TEMP
@@ -93,7 +116,7 @@ def _downloaded(input_):
     # if not remove from json
     newDowns = []
     for s in downs:
-        if os.path.exists(s['path']):
+        if path.exists(s['path']):
             newDowns.append(s)
 
     # check when page to low or high
@@ -112,12 +135,13 @@ def _downloaded(input_):
     printSongs(downs, page, int(m/SONG_PER_LIST) + 1, "Use 'play|p <sID>' to play")
     last_cmd = 'd'
 
-# search song from scrape youtube
+# search song from sc(
+# rape youtube
+#)
 def _search(string):
     global last_cmd, result
     # only get first 7
     result = fetchQuery(string)[:SONG_PER_LIST]
-    printSongs(result, 0, 1, "Use 'play|p <sID>' to play")
     last_cmd = 's'
 
 # play song in songs/search/downloaded current page

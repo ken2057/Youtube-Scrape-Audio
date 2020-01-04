@@ -8,3 +8,4 @@ error.log
 
 bin/ffmpeg.exe
 test.py
+todo.md

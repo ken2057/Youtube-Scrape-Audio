@@ -1,11 +1,11 @@
-import copy
-import random
 from os import path
+from copy import copy
+from random import randint
 # ------------------------------------------------------------------------------
-from src.audio import downloadAudio
-from src.createThread import thrDownload, thrFetchSong
 from src.io import readJson
+from src.audio import downloadAudio
 from src.utils import calcTime, formatSeconds
+from src.createThread import thrDownload, thrFetchSong
 from src.config import JSON_MCONFIG_PATH, JSON_DOWNLOADED_PATH
 # ------------------------------------------------------------------------------
 class Song():
@@ -38,14 +38,14 @@ class Song():
 		self.isEdit = False
 
 	def prev_song(self):
-		self.nextSong = copy.copy(self.curSong)
-		self.curSong = copy.copy(self.prevSong)
+		self.nextSong = copy(self.curSong)
+		self.curSong = copy(self.prevSong)
 		self.prevSong = {}
 		self.reset_play_value()
 
 	def next_song(self):
-		self.prevSong = copy.copy(self.curSong)
-		self.curSong = copy.copy(self.nextSong)
+		self.prevSong = copy(self.curSong)
+		self.curSong = copy(self.nextSong)
 		self.nextSong = {}
 		self.reset_play_value()
 		# select song different with prevSong
@@ -82,6 +82,7 @@ class Song():
 			total = calcTime(self.curSong['time'])
 			if self.mixer_get_pos() >= total * 0.7 and 'downloading' not in self.nextSong:
 				self.select_nextSong()
+				# add status to block create thread download
 				self.nextSong['downloading'] = True
 				thrDownload(self.nextSong)
 			
@@ -147,14 +148,14 @@ class Song():
 		self.isEdit = False
 		self.mixer = None
 		self.skipped = 0
-		self.curSong = {}
-		self.nextSong = {}
 		self.prevSong = {}
+		self.nextSong = {}
+		self.curSong = {}
 
 	def set_next_from_queue(self):
 		pos = 0
 		if self.isShuffle:
-			pos = random.randint(0, len(self.queue))
+			pos = randint(0, len(self.queue))
 			
-		self.nextSong = copy.copy(self.queue[pos])
+		self.nextSong = copy(self.queue[pos])
 		self.queue.pop(pos)

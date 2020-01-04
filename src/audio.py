@@ -1,28 +1,47 @@
-import os
-import youtube_dl
-from time import sleep
+from youtube_dl import YoutubeDL
+from os import path, remove
 from pygame import mixer # audio player
+from time import sleep
 # ------------------------------------------------------------------------------
-from src.config import DOWN_FOLDER, BASE_URL, ydl_opts
-from src.io import writeDownloaded, writeErrorLog
-from src.utils import getSongId, formatSeconds
+from src.config import (
+    DOWN_FOLDER, 
+    BASE_URL,
+    ydl_opts,
+)
+from src.io import (
+    writeDownloaded, 
+    writeErrorLog,
+)
+from src.utils import (
+    getSongId,
+)
 # ------------------------------------------------------------------------------
+def sendClickedSong(song):
+    with YoutubeDL(ydl_opts) as ydl:
+        ydl.extract_info(BASE_URL + song['url'], False)
 
 def downloadAudio(song):
     try:
         # check exists mp3
-        if 'path' in song and os.path.exists(song['path']):
+        if 'path' in song and path.exists(song['path']):
+            # try send cookie when listen to this song
+            # does YT recommend effect ?
+            from threading import Thread
+            thr = Thread(target=sendClickedSong, args=(song,))
+            thr.daemon = True
+            thr.start()
+
             return 'mp3 exist'
 
         songId = getSongId(song['url'])
         mp4 = DOWN_FOLDER + song['title'] +'-'+ songId + '.mp4'
         # check exists mp4 => delete
-        if os.path.exists(mp4):
-            os.remove(mp4)
+        if path.exists(mp4):
+            remove(mp4)
 
         # download mp4
         print('\nDownloading: ' + song['title'], end='')
-        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        with YoutubeDL(ydl_opts) as ydl:
             t = ydl.extract_info(BASE_URL + song['url'], True)
 
             # info = {
@@ -59,11 +78,12 @@ def playSound(song):
     song.isPlaying = True
     try:
         while song.isPlaying:
-            while song.mixer.get_busy():
+            while song.mixer != None and song.mixer.get_busy():
                 song.down_next_song()
                 sleep(2)
             # when play finished change status, and play next song
-            if not song.isPause and not song.isEdit:
+            # add check surSong != {} to prevent when 'delete-all'
+            if song.curSong != {} and not song.isPause and not song.isEdit:
                 song.finish_song()
                 song.next_song()
                 song.set_mixer()

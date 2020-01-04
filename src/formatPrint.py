@@ -1,12 +1,13 @@
-import os, platform
+from os import system
+import platform
 # ------------------------------------------------------------------------------
 from src.config import BASE_URL
 # ------------------------------------------------------------------------------
 def clearScreen():
     if platform.system() == 'Windows':
-        os.system('cls')
+        system('cls')
     else:
-        os.system('clear')
+        system('clear')
 
 def printMusicStatus(song):
     if 'title' in song.curSong:

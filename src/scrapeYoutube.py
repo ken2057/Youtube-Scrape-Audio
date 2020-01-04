@@ -1,9 +1,13 @@
-import sys
-import requests
-from http import cookiejar
 from bs4 import BeautifulSoup as BS
+from http import cookiejar
+from requests import get
 # ------------------------------------------------------------------------------
-from src.config import ID_REC, QUERY_URL, COOKIE_PATH, JSON_NAME_PATH
+from src.config import (
+    ID_REC, 
+    QUERY_URL, 
+    COOKIE_PATH, 
+    JSON_NAME_PATH,
+)
 from src.io import writeErrorLog, writeJson
 # ------------------------------------------------------------------------------
 # headers when send request (get english only)
@@ -51,7 +55,7 @@ def isValidSong(song):
 def singleSong(url, write_file=False):
     from datetime import datetime
     try:
-        r = requests.get(url, headers=header, cookies=getCookie())
+        r = get(url, headers=header, cookies=getCookie())
         soups = BS(r.content, 'html.parser').find(id=ID_REC).find_all('a')
         
         #
@@ -80,7 +84,7 @@ def singleSong(url, write_file=False):
 def fetchQuery(query):
     try:
         url = QUERY_URL + query.replace(' ', '+')
-        r = requests.get(url, headers=header, cookies=getCookie())
+        r = get(url, headers=header, cookies=getCookie())
 
         soups = BS(r.text, 'html.parser').body.find(class_='item-section').find_all(class_='yt-lockup-content')
         
@@ -107,7 +111,7 @@ def fetchQuery(query):
         return []
 
 def playlist(url):
-    page = requests.get(url)
+    page = get(url)
     # soups = BS(page.content, 'html.parser').find(class_='watch-queue-items-container')
     # , class_='yt-uix-scroller-scroll-unit'
     # class_='playlist-video'
