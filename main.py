@@ -19,8 +19,8 @@ QUERY_URL = 'https://www.youtube.com/results?search_query=y%C3%AAu+ch%C3%A2u+d%C
 # Global Varible
 # ------------------------------------------------------------------------------
 song = Song()
-songs = readJson()[0:SONG_PER_LIST]
-downs = readJson(JSON_DOWNLOADED_PATH)
+songs = []
+downs = []
 result = []
 last_cmd = None
 running = True
@@ -46,7 +46,7 @@ def playSong(songInput):
 
 # delete all mp3, json
 def _delete_all():
-    print('Delete all file in audio/')
+    print('Delete all file in json, cookie and audio/')
     # confirm delete
     confirm = input('Confirm (yes/no): ')
     if confirm.lower().strip(' \t') not in ['y', 'yes']:
@@ -116,7 +116,7 @@ def _downloaded(input_):
 def _search(string):
     global last_cmd, result
     # only get first 7
-    result = fetchQuery(' '.join(string))[:7]
+    result = fetchQuery(' '.join(string))[:SONG_PER_LIST]
     printSongs(result, 0, 1, "Use 'play|p <sID>' to play")
     last_cmd = 's'
 
@@ -197,7 +197,7 @@ def _prev():
         song.prev_song()
         song.set_mixer(skip=True)
     else:
-        print('Next song: None')
+        print('Previous song: None')
 
 # stop
 def _exit():

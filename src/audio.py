@@ -21,7 +21,7 @@ def downloadAudio(song):
             os.remove(mp4)
 
         # download mp4
-        print('\nDownloading:', song['title'], end='')
+        print('\nDownloading: ' + song['title'], end='')
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             t = ydl.extract_info(BASE_URL + song['url'], True)
 
