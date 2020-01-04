@@ -116,7 +116,7 @@ def _downloaded(input_):
 def _search(string):
     global last_cmd, result
     # only get first 7
-    result = fetchQuery(' '.join(string))[:SONG_PER_LIST]
+    result = fetchQuery(string)[:SONG_PER_LIST]
     printSongs(result, 0, 1, "Use 'play|p <sID>' to play")
     last_cmd = 's'
 
@@ -190,6 +190,8 @@ def _prev_info():
     if song.prevSong != {}:
         printSongs([song.prevSong], 0, 1, "Use 'prev' to play")
         last_cmd = None
+    else:
+        print('Previous song: None')
 
 # play previous song
 def _prev():

@@ -1,6 +1,5 @@
 import sys
 import requests
-import urllib.parse
 from http import cookiejar
 from bs4 import BeautifulSoup as BS
 # ------------------------------------------------------------------------------
@@ -80,7 +79,7 @@ def singleSong(url, write_file=False):
 
 def fetchQuery(query):
     try:
-        url = QUERY_URL + urllib.parse.quote(query)
+        url = QUERY_URL + query.replace(' ', '+')
         r = requests.get(url, headers=header, cookies=getCookie())
 
         soups = BS(r.text, 'html.parser').body.find(class_='item-section').find_all(class_='yt-lockup-content')
