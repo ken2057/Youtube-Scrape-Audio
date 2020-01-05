@@ -71,7 +71,8 @@ class Main():
             'queue_shuffle':    (lambda x: self._queue_shuffle()),
             'copy':             (lambda x: self._copy()),
             'delete':           (lambda x: self._delete(x)),
-            'repeat':           (lambda x: self._repeat(x))
+            'repeat':           (lambda x: self._repeat(x)),
+            'set_next':         (lambda x: self._set_next(x))
         }
 
     # play song with songInput
@@ -374,3 +375,19 @@ class Main():
             self.song.repeatTime = 0
             self.song.nextSong = {}
         self.song.select_nextSong()
+
+    # set next song
+    def _set_next(self, i):
+        if self.last_cmd != None and len(i) > 1:
+            play_cmd = {
+                'sg': self.songs,
+                'd': self.downs,
+                's': self.result
+            }
+            self.song.nextSong = play_cmd[self.last_cmd][int(i[1])]
+            self.song.nextSong['unchange'] = True
+            # if set next when have a queue, remove queue
+            if self.song.queue != []:
+                self.song.queue = []
+        else:
+            print('Nothing to set next')

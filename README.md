@@ -101,6 +101,7 @@ $ qshuffle|qsf                      : Turn ON/OFF queue shuffle
 
 $ next|n                            : Play next song
 $ nexti|ni                          : Show next song info
+$ setnext|setn <sID>                : Set next song from songs/search/downs curren page
 
 $ prev                              : Play previous song
 $ previ                             : Show previous song info

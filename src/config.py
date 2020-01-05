@@ -69,4 +69,5 @@ CMD = {
     'copy':                 ['copy', 'cp'],                             # copy current song url
     'delete':               ['delete', 'del'],                          # delete song/songs
     'repeat':               ['repeat', 're'],                           # repeat/unrepeat curent song
+    'set_next':             ['setnext', 'setn']
 }

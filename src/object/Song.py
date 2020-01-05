@@ -111,11 +111,11 @@ class Song():
 		# so when use 'nexti', will not subtract multi time
 		if self.repeatTime != 0 and self.nextSong != self.curSong:
 			self.nextSong = copy(self.curSong)
-			self.nextSong['repeat'] = True
+			self.nextSong['unchange'] = True
 			if self.repeatTime > 0:
 				self.repeatTime -= 1
 		# check next song is a repeat song?
-		if 'repeat' in self.nextSong :
+		if 'unchange' in self.nextSong:
 			return
 
 		# when have queue song, play until fisnish queue
@@ -172,7 +172,11 @@ class Song():
 		curSong = self.curSong['title']+' - '+self.curSong['channel']
 		# repeat status
 		# check repeat x time ?
-		flag = 'repeat' in self.nextSong and self.repeatTime >= 0
+		flag = (
+				self.nextSong != {} and self.curSong != {}
+				and self.curSong['id'] == self.nextSong['id'] 
+				and self.repeatTime >= 0
+			)
 		repeat = (lambda: '('+str(self.repeatTime + 1)+') ' if flag > 0 else '')()
 		# check unlimit or 0
 		flag = self.repeatTime == -1 and repeat == ''
