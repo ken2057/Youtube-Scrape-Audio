@@ -3,6 +3,9 @@ import platform
 # ------------------------------------------------------------------------------
 from src.config import SHORT_URL
 # ------------------------------------------------------------------------------
+def changeTitle(title):
+    system("title "+'\"'+str(title)+'\"')
+
 def clearScreen():
     if platform.system() == 'Windows':
         system('cls')
@@ -14,6 +17,7 @@ def printMusicStatus(song):
         print(song.__str__())
     else:
         print('Watting song')
+        changeTitle('Waitting song')
 
 def printSongs(listSong, page, totalPage, note=None):
     clearScreen()
@@ -53,16 +57,17 @@ def printHelp():
     print()
     print("$ volume|v\t\t\t\t: Show current volume level")
     print("$ volume|v <float>\t\t\t: Set volume level")
-    print("$ pause|unpause|play\t\t\t: Did what they say")
+    print()
+    print("$ pause|unpause|play|P\t\t\t: Did what they say")
     print("$ skip <second>\t\t\t\t: Skip song time from current time")
     print("$ info\t\t\t\t\t: Show information of current song")
     print("$ copy|cp\t\t\t\t: Copy current song url to clipboard")
-    print("$ delete|del <sID> [sID]*\t\t: Delete song from downloaded, can delete many")
     print('$ repeat|re [time]\t\t\t: Repeat\\Un-repeat current song x time, (not input time, it will run forever)')
     print()
     print('$ cls|clear\t\t\t\t: Clear screen')
     print('$ help|h\t\t\t\t: Show this')
     print()
+    print("$ delete|del <sID> [sID]*\t\t: Delete song from downloaded, can delete many")
     print('$ delete-all\t\t\t\t: Delete all the song in audio/, and json file')
     print()
     print('$ exit\t\t\t\t\t: Surely is Exit')

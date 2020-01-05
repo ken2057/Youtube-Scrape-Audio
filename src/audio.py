@@ -4,6 +4,7 @@ from pygame import mixer # audio player
 from time import sleep
 import traceback
 # ------------------------------------------------------------------------------
+from src.formatPrint import changeTitle
 from src.config import (
     DOWN_FOLDER, 
     BASE_URL,
@@ -16,6 +17,7 @@ from src.io import (
 )
 from src.utils import (
     getSongId,
+    formatSeconds
 )
 # ------------------------------------------------------------------------------
 def sendClickedSong(song):
@@ -84,6 +86,8 @@ def playSound(song):
                 and song.mixer != None
                 and song.mixer.get_busy()):
                     song.time += 1
+                    # changeTitle(formatSeconds(song.time))
+                    changeTitle(song.__str__())
                     song.down_next_song()
             # when play finished change status, and play next song
             # add check surSong != {} to prevent when 'delete-all'

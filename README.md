@@ -106,16 +106,17 @@ $ previ                             : Show previous song info
 
 $ volume|v                          : Show current volume level
 $ volume|v <float>                  : Set volume level
-$ pause|unpause|play                : Did what they say
+
+$ pause|unpause|play|P              : Pause|Unpause
 $ skip <second>                     : Skip song time from current time
 $ info                              : Show information of current song
 $ copy|cp                           : Copy current song url to clipboard
-$ delete|del <sID> [sID]*           : Delete song from downloaded, can delete many
 $ repeat|re [time]                  : Repeat\Un-repeat current song x time, (not input time, it will run forever)
 
 $ cls|clear                         : Clear screen
 $ help|h                            : Show this
 
+$ delete|del <sID> [sID]*           : Delete song from downloaded, can delete many
 $ delete-all                        : Delete all the song in audio/
 
 $ exit                              : Surely is Exit
