@@ -66,6 +66,21 @@ def updateConfig(newData):
     data.update(newData)
     writeJson(data, JSON_MCONFIG_PATH)
 
+# delete songs in downloaded
+def deleteSongs(songs):
+    try:
+        data = readJson(JSON_DOWNLOADED_PATH)
+        
+        for song in songs:
+            # remove mp3 file
+            remove(song['path'])
+            # remove item in json
+            data.remove(song)
+            
+        writeJson(data, JSON_DOWNLOADED_PATH)
+    except Exception as ex:
+        writeErrorLog(ex)
+
 def deleteAllSong():
     files = glob(DOWN_FOLDER+'/*')
     if (len(files) == 0):

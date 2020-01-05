@@ -81,10 +81,12 @@ def playSound(song):
             # mixer != None: now throw error when play new song
             # get_busy: check is runing
             # isPause: get_busy alway return 1 so can't use for song.time+=1
-            while song.mixer != None and song.mixer.get_busy() and not song.isPause:
-                song.time += 1
-                song.down_next_song()
-                sleep(1)
+            while (song.mixer != None 
+                and song.mixer.get_busy() 
+                and not song.isPause):
+                    song.time += 1
+                    song.down_next_song()
+                    sleep(1)
             # when play finished change status, and play next song
             # add check surSong != {} to prevent when 'delete-all'
             if song.curSong != {} and not song.isPause and not song.isEdit:

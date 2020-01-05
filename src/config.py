@@ -6,9 +6,6 @@ SHORT_URL = 'https://youtu.be/'
 BASE_URL = 'https://www.youtube.com/watch?v='
 QUERY_URL = 'https://www.youtube.com/results?search_query='
 
-# id of element of youtube recommend
-ID_REC = 'watch7-sidebar-modules'
-
 # json save all the song have been clicked
 JSON_NAME_PATH = 'json/link.json'
 JSON_PLAYLIST_PATH = 'json/playlist.json'
@@ -69,5 +66,6 @@ CMD = {
     'play_downloaded':      ['pd', 'playdowns', 'playdownloaded'],
     'queue':                ['queue', 'q'],
     'queue_shuffle':        ['qsf', 'qshuffle'],
-    'copy':                 ['copy', 'cp'] # copy current song url
+    'copy':                 ['copy', 'cp'], # copy current song url
+    'delete':               ['delete', 'del']
 }

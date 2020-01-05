@@ -3,7 +3,6 @@ from http import cookiejar
 from requests import get
 # ------------------------------------------------------------------------------
 from src.config import (
-    ID_REC, 
     QUERY_URL, 
     COOKIE_PATH, 
     JSON_NAME_PATH,
@@ -56,8 +55,8 @@ def isValidSong(song):
 def singleSong(url, write_file=False):
     from datetime import datetime
     try:
-        r = get(url, headers=header, cookies=getCookie())
-        soups = BS(r.content, 'html.parser').find(id=ID_REC).find_all('a')
+        r = get(url, headers=header, cookies=getCookie()) 
+        soups = BS(r.content, 'html.parser').find(id='watch7-sidebar-modules').find_all('a')
         
         #
         order = ['title', 'time', 'channel', 'views']

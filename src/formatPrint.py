@@ -20,7 +20,11 @@ def printSongs(listSong, page, totalPage, note=None):
     print('-'*20)
     for i, s in enumerate(listSong, 0):
         print('- sID:', i, '\t-\t', s['title'])
-        print('- Time:', s['time'], '\t-\tChannel:', s['channel'],'\t-\tViews:', s['views'])
+        print(
+            '- Time:', s['time'], 
+            '\t-\tChannel:', s['channel'],
+            '\t-\tViews:', s['views']
+        )
         # print('- Time:', s['time'])
         # print('- Channel:', s['channel'])
         # print('- Views:', s['views'])
@@ -53,6 +57,7 @@ def printHelp():
     print("$ skip <second>\t\t\t\t: Skip song time from current time")
     print("$ info\t\t\t\t\t: Show information of current song")
     print("$ copy|cp\t\t\t\t: Copy current song url to clipboard")
+    print("$ delete|del <sID> [sID]*\t\t: Delete song from downloaded, can delete many")
     print()
     print('$ cls|clear\t\t\t\t: Clear screen')
     print('$ help|h\t\t\t\t: Show this')

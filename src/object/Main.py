@@ -8,6 +8,7 @@ from src.io import (
     deleteAllSong, 
     writeErrorLog, 
     writeSongQueue,
+    deleteSongs
 )
 from src.config import (
     JSON_DOWNLOADED_PATH, 
@@ -66,7 +67,8 @@ class Main():
             'play_downloaded':  (lambda x: self._play_down()),
             'queue':            (lambda x: self._queue()),
             'queue_shuffle':    (lambda x: self._queue_shuffle()),
-            'copy':             (lambda x: self._copy())
+            'copy':             (lambda x: self._copy()),
+            'delete':           (lambda x: self._delete(x))
         }
 
     # play song with songInput
@@ -189,7 +191,8 @@ class Main():
     def _volume(self, i):
         # print volume level    
         if (len(i) == 1):
-            print("Volume:",str(round(float(readJson(JSON_MCONFIG_PATH)['volume']) * 100, 2))+'%')
+            print("Volume:", 
+                str(round(float(readJson(JSON_MCONFIG_PATH)['volume']) * 100, 2)) + '%')
         # change volume level
         else:
             updateConfig({'volume': float(i[1]) / 100})
@@ -263,12 +266,45 @@ class Main():
         _a = (lambda x: 'ON' if x else 'OFF')
         print('Queue shuffle:', _a(self.song.isShuffle))
 
+    # copy current song url to clipboard
     def _copy(self):
         if self.song.curSong != {}:
             copy(SHORT_URL + self.song.curSong['id'])
             print('Copied to clipboard')
         else:
             print('Nothing to copy')
+
+    # delete song from downloaded
+    def _delete(self, i):
+        if len(i) == 1:
+            print('Please add sID to delete')
+            return
+        if self.downs == []:
+            print("Use 'downs|d' to get list downloaded")
+            return
+        # check input
+        listSong = []
+        for sID in i[1:]:
+            try:
+                song = self.downs[int(sID)]
+                # equal current song
+                if (    self.song.curSong != {} 
+                    and self.song.curSong['id'] == song['id']):
+                        self.song.reset_play_value()
+                        self.song.mixer.unload()
+                # equal next song
+                elif (  self.song.nextSong != {} 
+                    and self.song.nextSong['id'] == song['id']):
+                        self.song.nextSong = {}
+                # equal previous song
+                elif (  self.song.prevSong != {} 
+                    and self.song.prevSong['id'] == song['id']):
+                        self.song.prevSong = {}
+                listSong.append(song)
+            except:
+                print('- Invalid sID:', sID)
+        # remove
+        deleteSongs(listSong)
 
     # Call this function to run
     def _running(self):
