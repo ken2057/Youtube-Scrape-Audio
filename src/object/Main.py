@@ -68,7 +68,8 @@ class Main():
             'queue':            (lambda x: self._queue()),
             'queue_shuffle':    (lambda x: self._queue_shuffle()),
             'copy':             (lambda x: self._copy()),
-            'delete':           (lambda x: self._delete(x))
+            'delete':           (lambda x: self._delete(x)),
+            'repeat':           (lambda x: self._repeat(x))
         }
 
     # play song with songInput
@@ -84,6 +85,26 @@ class Main():
             self.musicThread.start()
         else:
             self.song.set_mixer(True)
+
+    # Call this function to run
+    def _running(self):
+        self.running = True
+        while self.running:
+            print()
+            printMusicStatus(self.song)
+            i = input('$ ').strip(' ').split(' ')
+            try:
+                # if input in array of CMD
+                # use that key of CMD to active function in dict_cmd
+                for key in CMD:
+                    if i[0] in CMD[key]:
+                        self.dict_cmd[key](i)
+                        break
+                else:
+                    if i[0] != '':
+                        print('Command \'%s\' not found'%(i[0]))
+            except Exception as ex:
+                writeErrorLog(ex, ' '.join(i))
 
     # delete all mp3, json
     def _delete_all(self):
@@ -282,48 +303,45 @@ class Main():
         if self.downs == []:
             print("Use 'downs|d' to get list downloaded")
             return
+        
+        self.song.isEdit = True
         # check input
         listSong = []
+        # turn on edit
+        # so thread will not check nextSong when remove curSong 
+        # (error when repeat on)
+        self.song.isEdit = True
         for sID in i[1:]:
             try:
                 song = self.downs[int(sID)]
                 # equal current song
                 if (    self.song.curSong != {} 
                     and self.song.curSong['id'] == song['id']):
-                        self.song.reset_play_value()
+                        self.song.pause_song()
+                        self.song.repeatTime = 0
                         self.song.mixer.unload()
+                        self.song.curSong = {}
                 # equal next song
-                elif (  self.song.nextSong != {} 
+                if (  self.song.nextSong != {} 
                     and self.song.nextSong['id'] == song['id']):
                         self.song.nextSong = {}
-                # equal previous song
-                elif (  self.song.prevSong != {} 
-                    and self.song.prevSong['id'] == song['id']):
-                        self.song.prevSong = {}
+                # # equal previous song
+                # if (  self.song.prevSong != {} 
+                #     and self.song.prevSong['id'] == song['id']):
+                #         self.song.prevSong = {}
                 listSong.append(song)
             except:
                 print('- Invalid sID:', sID)
         # remove
         deleteSongs(listSong)
+        self.song.isEdit = False
 
-    # Call this function to run
-    def _running(self):
-        self.running = True
-        while self.running:
-            print()
-            printMusicStatus(self.song)
-            i = input('$ ').strip(' ').split(' ')
-            try:
-                # if input in array of CMD
-                # use that key of CMD to active function in dict_cmd
-                for key in CMD:
-                    if i[0] in CMD[key]:
-                        self.dict_cmd[key](i)
-                        break
-                else:
-                    if i[0] != '':
-                        print('Command \'%s\' not found'%(i[0]))
-            except Exception as ex:
-                writeErrorLog(ex, ' '.join(i))
-
-
+    # repeat current song x time
+    def _repeat(self, i):
+        # repeat unlimit
+        if len(i) == 1:
+            self.song.repeatTime = -1
+        else:
+            self.song.repeatTime = int(i[1])
+            self.song.nextSong = {}
+        self.song.select_nextSong()

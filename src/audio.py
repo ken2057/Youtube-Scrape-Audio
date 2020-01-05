@@ -75,24 +75,25 @@ def playSound(song):
     song.set_mixer()
     # start loop play event
     song.isPlaying = True
-    from datetime import datetime
     try:
         while song.isPlaying or song.isPause:
             # mixer != None: now throw error when play new song
             # get_busy: check is runing
             # isPause: get_busy alway return 1 so can't use for song.time+=1
-            while (song.mixer != None 
-                and song.mixer.get_busy() 
-                and not song.isPause):
+            if (not song.isPause
+                and song.mixer != None
+                and song.mixer.get_busy()):
                     song.time += 1
                     song.down_next_song()
-                    sleep(1)
             # when play finished change status, and play next song
             # add check surSong != {} to prevent when 'delete-all'
-            if song.curSong != {} and not song.isPause and not song.isEdit:
-                song.finish_song()
-                song.next_song()
-                song.set_mixer()
+            elif (not song.isEdit
+                and song.curSong != {} 
+                and not song.isPause):
+                    song.finish_song()
+                    song.next_song()
+                    song.set_mixer()
+            sleep(1) # reduce cpu usage and add time
     except Exception as ex:
         writeErrorLog(ex)
         

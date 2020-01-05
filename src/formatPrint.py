@@ -58,6 +58,7 @@ def printHelp():
     print("$ info\t\t\t\t\t: Show information of current song")
     print("$ copy|cp\t\t\t\t: Copy current song url to clipboard")
     print("$ delete|del <sID> [sID]*\t\t: Delete song from downloaded, can delete many")
+    print("$ repeat|re [time]\t\t\t\t: Repeat current song x time, (not input time, it will run forever)")
     print()
     print('$ cls|clear\t\t\t\t: Clear screen')
     print('$ help|h\t\t\t\t: Show this')

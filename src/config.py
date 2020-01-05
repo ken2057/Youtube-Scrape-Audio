@@ -67,5 +67,6 @@ CMD = {
     'queue':                ['queue', 'q'],
     'queue_shuffle':        ['qsf', 'qshuffle'],
     'copy':                 ['copy', 'cp'], # copy current song url
-    'delete':               ['delete', 'del']
+    'delete':               ['delete', 'del'],
+    'repeat':               ['repeat', 're'],
 }

@@ -14,6 +14,7 @@ class Song():
 	isFinish = False
 	isPause = False
 	isEdit = False
+	repeatTime = 0
 	time = 0
 
 	curSong = {}
@@ -54,7 +55,7 @@ class Song():
 		# select song different with prevSong
 		# self.select_nextSong()
 		thrFetchSong(self.curSong['id'])
-	
+
 	def set_mixer(self, skip=False):
 		# when use cmd 'skip', download next song
 		self.curSong = downloadAudio(self.curSong)
@@ -105,6 +106,18 @@ class Song():
 		# current not playing
 		if self.curSong == {}:
 			return
+		# repeat current song
+		# add check curSong and nextSong
+		# so when use 'nexti', will not subtract multi time
+		if self.repeatTime != 0 and self.nextSong != self.curSong:
+			self.nextSong = copy(self.curSong)
+			self.nextSong['repeat'] = True
+			if self.repeatTime > 0:
+				self.repeatTime -= 1
+		# check next song is a repeat song?
+		if 'repeat' in self.nextSong :
+			return
+
 		# when have queue song, play until fisnish queue
 		if len(self.queue) != 0:
 			self.set_next_from_queue()
@@ -157,4 +170,11 @@ class Song():
 		time = formatSeconds(self.time)+'/'+self.curSong['time']
 		# title - channel name
 		curSong = self.curSong['title']+' - '+self.curSong['channel']
-		return status+' '+time+': '+ curSong
+		# repeat status
+		# check repeat x time ?
+		flag = 'repeat' in self.nextSong and self.repeatTime >= 0
+		repeat = (lambda: '('+str(self.repeatTime + 1)+') ' if flag > 0 else '')()
+		# check unlimit or 0
+		flag = self.repeatTime == -1 and repeat == ''
+		repeat = (lambda: '(*) ' if flag else repeat)()
+		return repeat + status+' '+time+': '+ curSong
