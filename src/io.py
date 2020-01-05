@@ -90,6 +90,6 @@ def deleteAllSong():
 
 def getInDownloaded(song):
     for s in readJson(JSON_DOWNLOADED_PATH):
-        if song['url'] == s['url']:
+        if song['id'] == s['id']:
             return s
     return song

@@ -53,7 +53,7 @@ class Song():
 		self.nextSong = {}
 		# select song different with prevSong
 		# self.select_nextSong()
-		thrFetchSong(self.curSong['url'])
+		thrFetchSong(self.curSong['id'])
 	
 	def set_mixer(self, skip=False):
 		# when use cmd 'skip', download next song
@@ -121,9 +121,9 @@ class Song():
 
 		# select song different with prevSong
 		for song in listSong:
-			if self.prevSong == {} or song['url'] != self.prevSong['url']:
+			if self.prevSong == {} or song['id'] != self.prevSong['id']:
 				# check currentSong and nextSong not same
-				if song['url'] != self.curSong['url']:
+				if song['id'] != self.curSong['id']:
 					self.nextSong = song
 					break
 	

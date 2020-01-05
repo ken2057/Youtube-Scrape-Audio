@@ -1,4 +1,5 @@
 from os import path
+from pyperclip import copy
 
 from src.io import (
     readJson, 
@@ -14,6 +15,7 @@ from src.config import (
     DOWN_FOLDER, 
     ERROR_PATH, CMD, 
     SONG_PER_LIST,
+    SHORT_URL
 )
 from src.createThread import (
     thrSong, 
@@ -63,7 +65,8 @@ class Main():
             'previous':         (lambda x: self._prev()),
             'play_downloaded':  (lambda x: self._play_down()),
             'queue':            (lambda x: self._queue()),
-            'queue_shuffle':    (lambda x: self._queue_shuffle())
+            'queue_shuffle':    (lambda x: self._queue_shuffle()),
+            'copy':             (lambda x: self._copy())
         }
 
     # play song with songInput
@@ -71,7 +74,7 @@ class Main():
         # check song
         self.song.curSong = downloadAudio(songInput)
         # fetch next songs from page
-        thrFetchSong(self.song.curSong['url'])
+        thrFetchSong(self.song.curSong['id'])
         # check exist thread
         if self.musicThread == None:
             self.musicThread = thrSong(self.song)
@@ -260,6 +263,12 @@ class Main():
         _a = (lambda x: 'ON' if x else 'OFF')
         print('Queue shuffle:', _a(self.song.isShuffle))
 
+    def _copy(self):
+        if self.song.curSong != {}:
+            copy(SHORT_URL + self.song.curSong['id'])
+            print('Copied to clipboard')
+        else:
+            print('Nothing to copy')
 
     # Call this function to run
     def _running(self):

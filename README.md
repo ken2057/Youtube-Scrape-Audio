@@ -14,11 +14,12 @@
 # Dependences
 ```json
 python3
-ffmpeg 
+ffmpeg // Video convert
 youtube_dl (python)
 requests (python)
 beautifulsoup4 (python)
 pygame==2.0.0.dev6 (python) //I need 2.0.0 to use pygame.mixer.music.unload()
+pyperclip (python)
 ```
 <hr>
 
@@ -108,6 +109,7 @@ $ volume|v <float>                  : Set volume level
 $ pause|unpause|play                : Did what they say
 $ skip <second>                     : Skip song time from current time
 $ info                              : Show information of current song
+$ copy|cp                           : Copy current song url to clipboard
 
 $ cls|clear                         : Clear screen
 $ help|h                            : Show this

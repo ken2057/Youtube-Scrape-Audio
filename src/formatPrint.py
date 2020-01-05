@@ -1,7 +1,7 @@
 from os import system
 import platform
 # ------------------------------------------------------------------------------
-from src.config import BASE_URL
+from src.config import SHORT_URL
 # ------------------------------------------------------------------------------
 def clearScreen():
     if platform.system() == 'Windows':
@@ -24,7 +24,7 @@ def printSongs(listSong, page, totalPage, note=None):
         # print('- Time:', s['time'])
         # print('- Channel:', s['channel'])
         # print('- Views:', s['views'])
-        print('- Link:', BASE_URL + s['url'])
+        print('- Link:', SHORT_URL + s['id'])
         print('-'*20)
     print("Current page: %s/%s"%(page + 1, totalPage))
     if note != None:
@@ -52,6 +52,7 @@ def printHelp():
     print("$ pause|unpause|play\t\t\t: Did what they say")
     print("$ skip <second>\t\t\t\t: Skip song time from current time")
     print("$ info\t\t\t\t\t: Show information of current song")
+    print("$ copy|cp\t\t\t\t: Copy current song url to clipboard")
     print()
     print('$ cls|clear\t\t\t\t: Clear screen')
     print('$ help|h\t\t\t\t: Show this')

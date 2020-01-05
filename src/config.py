@@ -2,7 +2,8 @@
 SONG_PER_LIST = 6
 
 # base url
-BASE_URL = 'https://www.youtube.com'
+SHORT_URL = 'https://youtu.be/'
+BASE_URL = 'https://www.youtube.com/watch?v='
 QUERY_URL = 'https://www.youtube.com/results?search_query='
 
 # id of element of youtube recommend
@@ -21,7 +22,7 @@ COOKIE_PATH = 'cookie.txt'
 ERROR_PATH = 'error.log'
 
 # json format
-JSON_FORMAT = ['url', 'title', 'time', 'channel', 'views']
+JSON_FORMAT = ['id', 'title', 'time', 'channel', 'views']
 
 # audio download folder
 DOWN_FOLDER = 'audio/'
@@ -67,5 +68,6 @@ CMD = {
     'previous_info':        ['previ'],
     'play_downloaded':      ['pd', 'playdowns', 'playdownloaded'],
     'queue':                ['queue', 'q'],
-    'queue_shuffle':        ['qsf', 'qshuffle']
+    'queue_shuffle':        ['qsf', 'qshuffle'],
+    'copy':                 ['copy', 'cp'] # copy current song url
 }

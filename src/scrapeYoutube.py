@@ -9,6 +9,7 @@ from src.config import (
     JSON_NAME_PATH,
 )
 from src.io import writeErrorLog, writeJson
+from src.utils import getSongId
 # ------------------------------------------------------------------------------
 # headers when send request (get english only)
 header={'accept-language':'en;q=0.9'}
@@ -62,7 +63,7 @@ def singleSong(url, write_file=False):
         order = ['title', 'time', 'channel', 'views']
         listContent = []
         for a in soups:
-            content = {'url': a['href']}
+            content = {'id': getSongId(a['href'])}
             # zip to add to dict
             contentA = [listStrip(x.string) for x in a]
             contentA = [x for x in contentA if x not in ['']] #'Recommended for you'
@@ -95,7 +96,7 @@ def fetchQuery(query):
                 song = {
                     'title': listStrip(a.find('a').string),
                     'time': listStrip(a.find('span').string),
-                    'url': listStrip(a.find('a')['href']),
+                    'id': getSongId(listStrip(a.find('a')['href'])),
                     'channel': listStrip(a.find_all('a')[1].string),
                     'views': listStrip(a.find_all('li')[1].string)
                 }

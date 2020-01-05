@@ -20,7 +20,7 @@ from src.utils import (
 # ------------------------------------------------------------------------------
 def sendClickedSong(song):
     with YoutubeDL(ydl_opts) as ydl:
-        ydl.extract_info(BASE_URL + song['url'], False)
+        ydl.extract_info(BASE_URL + song['id'], False)
 
 def downloadAudio(song):
     try:
@@ -35,8 +35,7 @@ def downloadAudio(song):
             thr.start()
             return song
 
-        songId = getSongId(song['url'])
-        mp4 = DOWN_FOLDER + song['title'] +'-'+ songId + '.mp4'
+        mp4 = DOWN_FOLDER + song['title'] +'-'+ song['id'] + '.mp4'
         # check exists mp4 => delete
         if path.exists(mp4):
             remove(mp4)
@@ -44,14 +43,14 @@ def downloadAudio(song):
         # download mp4
         print('\nDownloading: ' + song['title'], end='')
         with YoutubeDL(ydl_opts) as ydl:
-            t = ydl.extract_info(BASE_URL + song['url'], True)
+            t = ydl.extract_info(BASE_URL + song['id'], True)
 
             # info = {
             #     'id': t['id'],
             #     'channel': t['uploader'],
             #     'title': t['title'],
             #     'categories': t['categories'],
-            #     'url': t['webpage_url'],
+            #     'id': t['webpage_url'],
             #     'views': t['view_count'],
             #     'time': formatSeconds(t['duration'])
             # }

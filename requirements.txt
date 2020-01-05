@@ -2,3 +2,4 @@ requests
 beautifulsoup4
 youtube_dl
 pygame==2.0.0.dev6
+pyperclip
