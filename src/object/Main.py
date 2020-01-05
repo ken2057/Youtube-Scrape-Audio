@@ -338,10 +338,16 @@ class Main():
 
     # repeat current song x time
     def _repeat(self, i):
-        # repeat unlimit
-        if len(i) == 1:
-            self.song.repeatTime = -1
+        # repeat song
+        if self.song.repeatTime == 0:
+            # repeat unlimit
+            if len(i) == 1:
+                self.song.repeatTime = -1
+            else:
+                self.song.repeatTime = int(i[1])
+                self.song.nextSong = {}
+        # un-repeat song
         else:
-            self.song.repeatTime = int(i[1])
+            self.song.repeatTime = 0
             self.song.nextSong = {}
         self.song.select_nextSong()

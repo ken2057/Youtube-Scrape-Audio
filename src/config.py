@@ -46,27 +46,27 @@ ERROR_HIDE = [
 # CMD LIST
 # if input have more than 1 word, it will show search
 CMD = {
-    'exit':                 ['exit', 'X'],
-    'pause':                ['pause', 'P'],
-    'unpause':              ['unpause'],
-    'clear':                ['clear', 'cls'],
-    'songs':                ['songs'],
-    'downloaded':           ['downloaded', 'downs', 'd'],
-    'search':               ['search', 's'],
-    'play':                 ['play', 'p'],
-    'volume':               ['volume', 'v'],
-    'help':                 ['help', 'h'],
-    'next':                 ['next', 'n'],
-    'next_info':            ['nexti', 'ni', 'nextinfo'],
-    'skip':                 ['skip'],
-    'info':                 ['info', 'i'],
-    'delete_all':           ['delete-all'],
-    'previous':             ['prev'],
-    'previous_info':        ['previ'],
-    'play_downloaded':      ['pd', 'playdowns', 'playdownloaded'],
-    'queue':                ['queue', 'q'],
-    'queue_shuffle':        ['qsf', 'qshuffle'],
-    'copy':                 ['copy', 'cp'], # copy current song url
-    'delete':               ['delete', 'del'],
-    'repeat':               ['repeat', 're'],
+    'exit':                 ['exit', 'X'],                              # exit
+    'pause':                ['pause', 'P'],                             # pause song
+    'unpause':              ['unpause'],                                # unpause song
+    'clear':                ['clear', 'cls'],                           # clear screen
+    'songs':                ['songs'],                                  # show songs recommend by Youtube
+    'downloaded':           ['downloaded', 'downs', 'd'],               # show downloaed song
+    'search':               ['search', 's'],                            # search based from Youtube
+    'play':                 ['play', 'p'],                              # play song with sID
+    'volume':               ['volume', 'v'],                            # show/change volume
+    'help':                 ['help', 'h'],                              # show help
+    'next':                 ['next', 'n'],                              # play next song
+    'next_info':            ['nexti', 'ni', 'nextinfo'],                # next song info
+    'skip':                 ['skip'],                                   # skip x time of current song
+    'info':                 ['info', 'i'],                              # info curent song
+    'delete_all':           ['delete-all'],                             # delete all json, mp3
+    'previous':             ['prev'],                                   # play previous song
+    'previous_info':        ['previ'],                                  # show previous song info
+    'play_downloaded':      ['pd', 'playdowns', 'playdownloaded'],      # play all in downloaded
+    'queue':                ['queue', 'q'],                             # show queue
+    'queue_shuffle':        ['qsf', 'qshuffle'],                        # on/off shuffle queue
+    'copy':                 ['copy', 'cp'],                             # copy current song url
+    'delete':               ['delete', 'del'],                          # delete song/songs
+    'repeat':               ['repeat', 're'],                           # repeat/unrepeat curent song
 }
