@@ -39,8 +39,10 @@ class Main():
         self.downs = []
         self.result = []
         self.last_cmd = None
-        self.running = True
+        self.running = False
 
+        # this will match key with config.CMD
+        # for fast input matching
         self.dict_cmd = {
             'exit':             (lambda x: self._exit()),
             'pause':            (lambda x: self.song.pause_song()),
@@ -254,12 +256,10 @@ class Main():
         _a = (lambda x: 'ON' if x else 'OFF')
         print('Queue shuffle:', _a(self.song.isShuffle))
 
-    # ------------------------------------------------------------------------------
-    # RUNNING
-    # ------------------------------------------------------------------------------
 
     # Call this function to run
     def _running(self):
+        self.running = True
         while self.running:
             print()
             printMusicStatus(self.song)
@@ -275,6 +275,6 @@ class Main():
                     if i[0] != '':
                         print('Command \'%s\' not found'%(i[0]))
             except Exception as ex:
-                writeErrorLog(str(ex), 'main', ' '.join(i))
+                writeErrorLog(ex, ' '.join(i))
 
 

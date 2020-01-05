@@ -2,6 +2,7 @@ from glob import glob
 from json import load, dump
 from os import remove
 from datetime import datetime
+from traceback import TracebackException
 # -----------------------------------------------------------------------------
 from src.config import (
     JSON_DOWNLOADED_PATH, 
@@ -36,19 +37,19 @@ def writeNext(string, path):
     with open(path, 'a', encoding='utf8') as f:
         f.writelines(string + '\n')
 
-def writeErrorLog(error, function, data=None):
+def writeErrorLog(error, data=None):
     note = []
     note.append('Time: ' + datetime.now().__str__())
-    note.append('Func: ' + function)
     if data != None:
         note.append('Input: '+ data)
-    note.append('Error: '+ str(error))
+    trace = TracebackException.from_exception(error)
+    note.append(''.join(trace.format()))
 
     writeNext('\n'.join(note) + '\n', ERROR_PATH)
 
     # some error will not need to print out
     if len([x for x in ERROR_HIDE if x in str(error)]) == 0:
-        if (function != 'main'):
+        if (data != None):
             print('\nerror:', str(error)+'\n$ ', end='')
         else:
             print('\nerror:', str(error))

@@ -2,6 +2,7 @@ from youtube_dl import YoutubeDL
 from os import path, remove
 from pygame import mixer # audio player
 from time import sleep
+import traceback
 # ------------------------------------------------------------------------------
 from src.config import (
     DOWN_FOLDER, 
@@ -66,7 +67,7 @@ def downloadAudio(song):
         if 'path' in song:
             print('\n$ ', end='')
     except Exception as ex:
-        writeErrorLog(str(ex), 'audio.downloaodAudio')
+        writeErrorLog(ex)
 
 def playSound(song):
     # create
@@ -89,4 +90,5 @@ def playSound(song):
                 song.set_mixer()
             sleep(1)
     except Exception as ex:
-        writeErrorLog(str(ex), 'audio.playSound')
+        writeErrorLog(ex)
+        

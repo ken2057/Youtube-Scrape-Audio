@@ -78,7 +78,7 @@ def singleSong(url, write_file=False):
             # use this so thread will not need to wait reuslt of this function
             writeJson(listContent, JSON_NAME_PATH)
     except Exception as ex:
-        writeErrorLog(str(ex), 'ScrapeYoutube.singleSong')
+        writeErrorLog(ex)
         return []
 
 def fetchQuery(query):
@@ -107,7 +107,7 @@ def fetchQuery(query):
         return listContent
 
     except Exception as ex:
-        writeErrorLog(str(ex), 'ScrapeYoutube.fetchQuery')
+        writeErrorLog(ex)
         return []
 
 def playlist(url):
