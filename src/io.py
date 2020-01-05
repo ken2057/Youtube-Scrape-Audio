@@ -3,6 +3,7 @@ from json import load, dump
 from os import remove
 from datetime import datetime
 from traceback import TracebackException
+import logging
 # -----------------------------------------------------------------------------
 from src.config import (
     JSON_DOWNLOADED_PATH, 
@@ -49,10 +50,7 @@ def writeErrorLog(error, data=None):
 
     # some error will not need to print out
     if len([x for x in ERROR_HIDE if x in str(error)]) == 0:
-        if (data != None):
-            print('\nerror:', str(error)+'\n$ ', end='')
-        else:
-            print('\nerror:', str(error))
+        logging.error('\n'+str(error))
 
 def writeSongQueue(song):
     print('[x]', song.curSong['title'])

@@ -6,7 +6,6 @@ from src.io import (
     updateConfig, 
     deleteAllSong, 
     writeErrorLog, 
-    getInDownloaded, 
     writeSongQueue,
 )
 from src.config import (
@@ -56,7 +55,7 @@ class Main():
             'help':             (lambda x: printHelp()),
             'next':             (lambda x: self._next()),
             'next_info':        (lambda x: self._next_info()),
-            'skip':             (lambda x: self._skip(int(x[1]))),
+            'skip':             (lambda x: self._skip(x)),
             'info':             (lambda x: self._info()),
             'delete_all':       (lambda x: self._delete_all()),
             'previous_info':    (lambda x: self._prev_info()),
@@ -68,10 +67,8 @@ class Main():
 
     # play song with songInput
     def playSong(self, songInput):
-        # check does downloaded
-        songInput = getInDownloaded(songInput)
         # check song
-        downloadAudio(songInput)
+        songInput = downloadAudio(songInput)
         # fetch next songs from page
         thrFetchSong(songInput['url'])
         # start
@@ -191,26 +188,26 @@ class Main():
 
     # play next song
     def _next(self):
-        if self.song.nextSong == {}:
-            self.song.select_nextSong()
+        self.song.select_nextSong()
         self.song.next_song()
         self.song.set_mixer(skip=True)
 
     # show next song info
     def _next_info(self):
-        if self.song.curSong != {}:
-            self.song.select_nextSong()
-            printSongs([self.song.nextSong], 0, 1, "Use 'next|n' to play")
-            self.last_cmd = None
-        else:
-            print('Next song: None')
+        self.song.select_nextSong()
+        printSongs([self.song.nextSong], 0, 1, "Use 'next|n' to play")
+        self.last_cmd = None
 
     # skip num seconds of the song
-    def _skip(self, num):
-        if self.song.isPlaying and self.song.is_skipable(num):
-            self.song.skip_time(num)
-        else:
-            print('Skip failed')
+    def _skip(self, i):
+        if len(i) < 2:
+            print('Add total second want to skip')
+            return
+        if (self.song.isPlaying or self.song.isPause):
+            if self.song.is_skipable(int(i[1])):
+                self.song.skip_time(int(i[1]))
+            else:
+                print('Skip failed')
 
     # show current song info
     def _info(self):

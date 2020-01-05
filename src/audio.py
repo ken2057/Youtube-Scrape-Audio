@@ -12,6 +12,7 @@ from src.config import (
 from src.io import (
     writeDownloaded, 
     writeErrorLog,
+    getInDownloaded,
 )
 from src.utils import (
     getSongId,
@@ -24,6 +25,7 @@ def sendClickedSong(song):
 def downloadAudio(song):
     try:
         # check exists mp3
+        song = getInDownloaded(song)
         if 'path' in song and path.exists(song['path']):
             # try send cookie when listen to this song
             # does YT recommend effect ?
@@ -31,8 +33,7 @@ def downloadAudio(song):
             thr = Thread(target=sendClickedSong, args=(song,))
             thr.daemon = True
             thr.start()
-
-            return 'mp3 exist'
+            return song
 
         songId = getSongId(song['url'])
         mp4 = DOWN_FOLDER + song['title'] +'-'+ songId + '.mp4'
@@ -63,11 +64,9 @@ def downloadAudio(song):
             song.pop('downloading')
         # write to download
         writeDownloaded(song)
-        # pre-print '$ ' after auto downoad (lazy way)
-        if 'path' in song:
-            print('\n$ ', end='')
     except Exception as ex:
         writeErrorLog(ex)
+    return song
 
 def playSound(song):
     # create
@@ -78,17 +77,17 @@ def playSound(song):
     # start loop play event
     song.isPlaying = True
     try:
-        while song.isPlaying:
-            while song.mixer != None and song.mixer.get_busy():
+        while song.isPlaying or song.isPause:
+            while song.mixer != None and song.mixer.get_busy() and not song.isPause:
+                song.time += 1
                 song.down_next_song()
-                sleep(2)
+                sleep(1)
             # when play finished change status, and play next song
             # add check surSong != {} to prevent when 'delete-all'
             if song.curSong != {} and not song.isPause and not song.isEdit:
                 song.finish_song()
                 song.next_song()
                 song.set_mixer()
-            sleep(1)
     except Exception as ex:
         writeErrorLog(ex)
         
