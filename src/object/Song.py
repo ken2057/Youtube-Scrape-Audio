@@ -39,7 +39,6 @@ class Song():
 		self.nextSong = copy(self.curSong)
 		self.curSong = copy(self.prevSong)
 		self.prevSong = {}
-		self.reset_play_value()
 	
 	def finish_song(self):
 		# self.time += 1 #missing 1s KEKW	
@@ -52,7 +51,6 @@ class Song():
 		self.prevSong = copy(self.curSong)
 		self.curSong = copy(self.nextSong)
 		self.nextSong = {}
-		self.reset_play_value()
 		# select song different with prevSong
 		# self.select_nextSong()
 		thrFetchSong(self.curSong['url'])
@@ -60,20 +58,19 @@ class Song():
 	def set_mixer(self, skip=False):
 		# when use cmd 'skip', download next song
 		self.curSong = downloadAudio(self.curSong)
-
+		self.reset_play_value()
 		# unlocad() can only use in pygame==2.0.0
 		# but not released => temp use pygame==2.0.0.dev6
 		self.mixer.unload()
 		# return before load if not exists
-		
 		if not path.exists(self.curSong['path']):
 			return
 		self.mixer.load(self.curSong['path'])
 		self.mixer.set_volume(readJson(JSON_MCONFIG_PATH)['volume'])
 		self.mixer.play()
 		# pre-print, (lazy way)
-		# if not skip:
-		# 	print('\n\n'+self.__str__()+'\n$ ', end='')
+		if not skip:
+			print('\n\n'+self.__str__()+'\n$ ', end='')
 
 	def down_next_song(self):
 		# played 70% of the song, download next song
@@ -85,21 +82,6 @@ class Song():
 				# add status to block create thread download
 				self.nextSong['downloading'] = True
 				thrDownload(self.nextSong)
-			
-	def __str__(self):
-		status = 'Loading'
-		if self.isPlaying:
-			status = 'Playing'
-		elif self.isPause:
-			status = 'Pause'
-		elif self.isFinish:
-			status = 'Finished'
-		# format will be <current play time>/<total>
-		# format time will be mm:ss
-		time = formatSeconds(self.time)+'/'+self.curSong['time']
-		# title - channel name
-		curSong = self.curSong['title']+' - '+self.curSong['channel']
-		return status+' '+time+': '+ curSong
 	
 	def pause_song(self):
 		self.isPause = True
@@ -146,6 +128,7 @@ class Song():
 					break
 	
 	def reset_play_value(self):
+		self.isPause = False
 		self.isFinish = False
 		self.isPlaying = True
 		self.time = 0
@@ -155,8 +138,23 @@ class Song():
 		self.isFinish = False
 		self.isPause = False
 		self.isEdit = False
-		self.mixer = None
+		# self.mixer = None
 		self.time = 0
 		self.prevSong = {}
 		self.nextSong = {}
 		self.curSong = {}
+
+	def __str__(self):
+		status = 'Loading'
+		if self.isPlaying:
+			status = 'Playing'
+		elif self.isPause:
+			status = 'Pause'
+		elif self.isFinish:
+			status = 'Finished'
+		# format will be <current play time>/<total>
+		# format time will be mm:ss
+		time = formatSeconds(self.time)+'/'+self.curSong['time']
+		# title - channel name
+		curSong = self.curSong['title']+' - '+self.curSong['channel']
+		return status+' '+time+': '+ curSong

@@ -39,6 +39,7 @@ class Main():
         self.result = []
         self.last_cmd = None
         self.running = False
+        self.musicThread = None
 
         # this will match key with config.CMD
         # for fast input matching
@@ -46,7 +47,7 @@ class Main():
             'exit':             (lambda x: self._exit()),
             'pause':            (lambda x: self.song.pause_song()),
             'unpause':          (lambda x: self.song.unpause_song()),
-            'clear':            (lambda x: clearScreen()),
+            'clear':            (lambda x: self._clear()),
             'songs':            (lambda x: self._songs(x)),
             'downloaded':       (lambda x: self._downloaded(x)),
             'search':           (lambda x: self._search(' '.join(x[1:]))),
@@ -68,15 +69,16 @@ class Main():
     # play song with songInput
     def playSong(self, songInput):
         # check song
-        songInput = downloadAudio(songInput)
+        self.song.curSong = downloadAudio(songInput)
         # fetch next songs from page
-        thrFetchSong(songInput['url'])
-        # start
-        self.song.reset_all()
-        self.song.curSong = songInput
-        musicThread = thrSong(self.song)
-        musicThread.daemon = True
-        musicThread.start()
+        thrFetchSong(self.song.curSong['url'])
+        # check exist thread
+        if self.musicThread == None:
+            self.musicThread = thrSong(self.song)
+            self.musicThread.daemon = True
+            self.musicThread.start()
+        else:
+            self.song.set_mixer(True)
 
     # delete all mp3, json
     def _delete_all(self):
@@ -88,7 +90,12 @@ class Main():
         if self.song.mixer != None:
             self.song.mixer.unload()
             self.song.reset_all()
+            self.musicThread = None
         deleteAllSong()
+
+    def _clear(self):
+        clearScreen()
+        self.last_cmd = None
 
     # show song recommended by YT
     def _songs(self, input_):

@@ -76,8 +76,12 @@ def playSound(song):
     song.set_mixer()
     # start loop play event
     song.isPlaying = True
+    from datetime import datetime
     try:
         while song.isPlaying or song.isPause:
+            # mixer != None: now throw error when play new song
+            # get_busy: check is runing
+            # isPause: get_busy alway return 1 so can't use for song.time+=1
             while song.mixer != None and song.mixer.get_busy() and not song.isPause:
                 song.time += 1
                 song.down_next_song()
