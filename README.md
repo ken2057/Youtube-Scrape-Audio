@@ -96,8 +96,11 @@ $ play|p <sID>                      : Play song from 'songs/search/downs' curren
 $ play|p <URL>|<YT_ID>              : Play song youtube url or youtube video id
 
 $ playdowns|pd                      : Play all sone in downloaded
+
 $ queue|q                           : Show current queue
 $ qshuffle|qsf                      : Turn ON/OFF queue shuffle
+$ qadd|qa [sID|URL]*                : Add song to queue, if don\'t have input add all song in current page
+$ qremove|qr [sID]*                 : Remove song in queue with sID (can remove many), if don\' have sID, remove all queue
 
 $ next|n                            : Play next song
 $ nexti|ni                          : Show next song info

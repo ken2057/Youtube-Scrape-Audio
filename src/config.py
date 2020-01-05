@@ -69,5 +69,7 @@ CMD = {
     'copy':                 ['copy', 'cp'],                             # copy current song url
     'delete':               ['delete', 'del'],                          # delete song/songs
     'repeat':               ['repeat', 're'],                           # repeat/unrepeat curent song
-    'set_next':             ['setnext', 'setn']
+    'set_next':             ['setnext', 'setn'],                        # set next song
+    'queue_add':            ['qadd', 'qa'],                         # add song to queue
+    'queue_remove':         ['qremove', 'qr'],                      # remove song in queue
 }

@@ -100,6 +100,7 @@ class Song():
 			pos = randint(0, len(self.queue))
 			
 		self.nextSong = copy(self.queue[pos])
+		self.nextSong['unchange'] = True
 		self.queue.pop(pos)
 
 	def select_nextSong(self):

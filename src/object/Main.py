@@ -7,7 +7,6 @@ from src.io import (
     updateConfig, 
     deleteAllSong, 
     writeErrorLog, 
-    writeSongQueue,
     deleteSongs
 )
 from src.config import (
@@ -28,6 +27,7 @@ from src.formatPrint import (
     printSongs, 
     clearScreen, 
     printMusicStatus,
+    writeSongQueue,
 )
 from src.audio import (
     downloadAudio, 
@@ -72,7 +72,9 @@ class Main():
             'copy':             (lambda x: self._copy()),
             'delete':           (lambda x: self._delete(x)),
             'repeat':           (lambda x: self._repeat(x)),
-            'set_next':         (lambda x: self._set_next(x))
+            'set_next':         (lambda x: self._set_next(x)),
+            'queue_add':        (lambda x: self._queue_add(x)),
+            'queue_remove':     (lambda x: self._queue_remove(x))
         }
 
     # play song with songInput
@@ -88,6 +90,28 @@ class Main():
             self.musicThread.start()
         else:
             self.song.set_mixer(True)
+
+    def regexURL(self, string):
+        # if match YT link and youtube id video length == 1
+        # or length input == 11
+        flag1 = string.startswith((BASE_URL, SHORT_URL))
+        lmd = (lambda x: len(x) == 11) # checking YT video ID
+        ytID = string.replace(BASE_URL, '').replace(SHORT_URL, '')
+        return [(flag1 and lmd(ytID)) or lmd(string), ytID]
+
+    def get_play_cmd(self, sID=None):
+        # check last command used
+        # if in ['songs', 'downs', 'search']
+        # play song from that list
+        play_cmd = {
+            'sg': self.songs,
+            'd': self.downs,
+            's': self.result
+        }
+        if sID != None:
+            return play_cmd[self.last_cmd][sID]
+        # return all song in curren page
+        return play_cmd[self.last_cmd]
 
     # Call this function to run
     def _running(self):
@@ -198,19 +222,11 @@ class Main():
             if len(input_) > 1:
                 # try check is play sID or play URL
                 sID = int(input_[1])
-                # check last command used
-                # if in ['songs', 'downs', 'search']
-                # play song from that list
                 if self.last_cmd != None:
-                    play_cmd = {
-                        'sg': self.songs,
-                        'd': self.downs,
-                        's': self.result
-                    }
                     # play sone from other will stop queue
                     if self.song.queue != []:
                         self.song.queue = []
-                    self.playSong(play_cmd[self.last_cmd][sID])
+                    self.playSong(self.get_play_cmd(sID))
             # if pause => unpause
             elif len(input_) == 1 and self.song.isPause:
                     self.song.unpause_song()
@@ -218,18 +234,13 @@ class Main():
                 print('Nothing to play')
         # play <url>: play with URL input
         except:
-            flag1 = input_[1].startswith((BASE_URL, SHORT_URL))
-            lmd = (lambda x: len(x) == 11) # checking YT video ID
-            ytID = input_[1].replace(BASE_URL, '').replace(SHORT_URL, '')
-            # if match YT link and youtube id video length == 1
-            # or length input == 11
-            if (flag1 and lmd(ytID)) or lmd(input_[1]):
+            flag, ytID = self.regexURL(input_[1])
+            if flag:
                 song = downloadURL(ytID)
                 if song != {}:
                     self.playSong(song)
             else:
                 print('URL invalid')
-
 
     # show current volume
     # change volume with num
@@ -379,15 +390,59 @@ class Main():
     # set next song
     def _set_next(self, i):
         if self.last_cmd != None and len(i) > 1:
-            play_cmd = {
-                'sg': self.songs,
-                'd': self.downs,
-                's': self.result
-            }
-            self.song.nextSong = play_cmd[self.last_cmd][int(i[1])]
+            self.song.nextSong = self.get_play_cmd(int(i[1]))
             self.song.nextSong['unchange'] = True
+            print('Set next song success')
             # if set next when have a queue, remove queue
             if self.song.queue != []:
                 self.song.queue = []
         else:
             print('Nothing to set next')
+    
+    # add song to queue
+    def _queue_add(self, i):
+        # add all song in current page
+        if len(i) == 1:
+            if self.last_cmd != None:
+                self.song.queue = self.song.queue + self.get_play_cmd()
+                print('Added all song in current page to queue')
+            else:
+                print('Nothing to add')
+        else:
+            # add multi song
+            for sID in i[1:]:
+                try:
+                    if self.last_cmd != None:
+                        self.song.queue.append(self.get_play_cmd(int(sID)))
+                        print('sID %s added to queue'%(sID))
+                # play <url>: play with URL input
+                except:
+                    flag, ytID = self.regexURL(sID)
+                    if flag:
+                        song = downloadURL(ytID)
+                        if song != {}:
+                            self.song.queue.append(song)
+                            print('Song %s added to queue'%(ytID))
+                    else:
+                        print('URL invalid: '+sID)
+        # song not play, play it
+        if self.musicThread == None and self.song.queue != []:
+            self.playSong(self.song.queue[0])
+            self.song.queue = self.song.queue[1:]
+    
+    # remove song in queue
+    def _queue_remove(self, i):
+        # remove 1 song
+        if len(i) > 1:
+            for sID in i[1:]:
+                try:
+                    sID = int(sID)
+                    if len(self.song.queue) >= sID and sID >= 1:
+                        self.song.queue.pop(sID)
+                        print('Song %s removed'%(sID))
+                except:
+                    print('Invalid '+sID)
+        # remove queue
+        else:
+            self.song.queue = []
+            print('Queue removed')

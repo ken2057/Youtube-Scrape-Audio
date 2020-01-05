@@ -52,12 +52,6 @@ def writeErrorLog(error, data=None):
     if len([x for x in ERROR_HIDE if x in str(error)]) == 0:
         logging.error('\n'+str(error))
 
-def writeSongQueue(song):
-    print('[x]', song.curSong['title'])
-    for i, s in enumerate(song.queue, 1):
-        print('[%s] %s'%(i, s['title']))
-    print()
-
 # -----------------------------------------------------------------------------
 # OTHER
 # -----------------------------------------------------------------------------

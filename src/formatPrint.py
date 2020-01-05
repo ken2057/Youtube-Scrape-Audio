@@ -38,6 +38,12 @@ def printSongs(listSong, page, totalPage, note=None):
     if note != None:
         print(note)
 
+def writeSongQueue(song):
+    print('[x]', song.curSong['title'])
+    for i, s in enumerate([song.nextSong] + song.queue, 1):
+        print('[%s] %s'%(i, s['title']))
+    print()
+
 def printHelp():
     print()
     print('Help!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
@@ -50,8 +56,11 @@ def printHelp():
     print("$ play|p <URL>|<YT_ID>\t\t\t: Play song youtube url or youtube video id")
     print()
     print('$ playdowns|pd\t\t\t\t: Play all sone in downloaded')
+    print()
     print('$ queue|q\t\t\t\t: Show current queue')
     print('$ qshuffle|qsf\t\t\t\t: Turn ON/OFF queue shuffle')
+    print('$ qadd|qa [sID|URL]*\t\t\t: Add song to queue, if don\'t have input add all song in current page')
+    print('$ qremove|qr [sID]*\t\t\t\t: Remove song in queue with sID (can remove many), if don\' have sID, remove all queue')
     print()
     print('$ next|n\t\t\t\t: Play next song')
     print('$ nexti|ni\t\t\t\t: Show next song info')
