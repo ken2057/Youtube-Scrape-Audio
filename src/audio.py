@@ -6,8 +6,7 @@ import traceback
 # ------------------------------------------------------------------------------
 from src.formatPrint import changeTitle
 from src.config import (
-    DOWN_FOLDER, 
-    BASE_URL,
+    DOWN_FOLDER,
     ydl_opts,
 )
 from src.io import (
@@ -22,7 +21,7 @@ from src.utils import (
 # ------------------------------------------------------------------------------
 def sendClickedSong(song):
     with YoutubeDL(ydl_opts) as ydl:
-        ydl.extract_info(BASE_URL + song['id'], False)
+        ydl.extract_info(song['id'], False)
 
 def downloadAudio(song):
     try:
@@ -45,18 +44,7 @@ def downloadAudio(song):
         # download mp4
         print('\nDownloading: ' + song['title'], end='')
         with YoutubeDL(ydl_opts) as ydl:
-            t = ydl.extract_info(BASE_URL + song['id'], True)
-
-            # info = {
-            #     'id': t['id'],
-            #     'channel': t['uploader'],
-            #     'title': t['title'],
-            #     'categories': t['categories'],
-            #     'id': t['webpage_url'],
-            #     'views': t['view_count'],
-            #     'time': formatSeconds(t['duration'])
-            # }
-
+            t = ydl.extract_info(song['id'], True)
             # get file name generate by ydl
             name = '.'.join(ydl.prepare_filename(t).split('.')[:-1])
             song['path'] = name + '.mp3'
@@ -68,6 +56,29 @@ def downloadAudio(song):
     except Exception as ex:
         writeErrorLog(ex)
     return song
+
+def downloadURL(ytID):
+    try:
+        song = getInDownloaded({'id': ytID})
+        if 'path' not in song:
+            print('\nDownloading '+ytID, end='')
+            with YoutubeDL(ydl_opts) as ydl:
+                t = ydl.extract_info(ytID, True)
+                name = '.'.join(ydl.prepare_filename(t).split('.')[:-1])
+                song = {
+                    'id': t['id'],
+                    'channel': t['uploader'],
+                    'title': t['title'],
+                    'views': t['view_count'],
+                    'time': formatSeconds(t['duration']),
+                    'path': name + '.mp3'
+                }
+                # write to download
+                writeDownloaded(song)
+        return song
+    except Exception as ex:
+        writeErrorLog(ex)
+        return {}
 
 def playSound(song):
     # create

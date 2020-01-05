@@ -47,6 +47,7 @@ def printHelp():
     print('$ songs <page>\t\t\t\t: Show recommend song based on YT')
     print()
     print("$ play|p <sID>\t\t\t\t: Play song from 'songs/search/downs' current page")
+    print("$ play|p <URL>|<YT_ID>\t\t\t: Play song youtube url or youtube video id")
     print()
     print('$ playdowns|pd\t\t\t\t: Play all sone in downloaded')
     print('$ queue|q\t\t\t\t: Show current queue')

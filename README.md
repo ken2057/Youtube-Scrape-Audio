@@ -93,6 +93,7 @@ $ search|s <query>                  : Search song with query
 $ songs <page>                      : Show recommend song based on YT
 
 $ play|p <sID>                      : Play song from 'songs/search/downs' current page
+$ play|p <URL>|<YT_ID>              : Play song youtube url or youtube video id
 
 $ playdowns|pd                      : Play all sone in downloaded
 $ queue|q                           : Show current queue

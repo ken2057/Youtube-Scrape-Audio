@@ -16,7 +16,8 @@ from src.config import (
     DOWN_FOLDER, 
     ERROR_PATH, CMD, 
     SONG_PER_LIST,
-    SHORT_URL
+    SHORT_URL,
+    BASE_URL
 )
 from src.createThread import (
     thrSong, 
@@ -30,6 +31,7 @@ from src.formatPrint import (
 )
 from src.audio import (
     downloadAudio, 
+    downloadURL,
 )
 from src import Song
 from src.scrapeYoutube import fetchQuery
@@ -188,24 +190,45 @@ class Main():
 
     # play song in songs/search/downloaded current page
     def _play(self, input_):
-        # check last command used
-        # if in ['songs', 'downs', 'search']
-        # play song from that list
-        if self.last_cmd != None and len(input_) > 1:
-            play_cmd = {
-                'sg': self.songs,
-                'd': self.downs,
-                's': self.result
-            }
-            # play sone from other will stop queue
-            if self.song.queue != []:
-                self.song.queue = []
-            self.playSong(play_cmd[self.last_cmd][int(input_[1])])
-        # if pause => unpause
-        elif len(input_) == 1 and self.song.isPause:
-                self.song.unpause_song()
-        else:
-            print('Nothing to play')
+        # first case 
+        # play: unpause
+        # play <sID>: play song
+        try:
+            if len(input_) > 1:
+                # try check is play sID or play URL
+                sID = int(input_[1])
+                # check last command used
+                # if in ['songs', 'downs', 'search']
+                # play song from that list
+                if self.last_cmd != None:
+                    play_cmd = {
+                        'sg': self.songs,
+                        'd': self.downs,
+                        's': self.result
+                    }
+                    # play sone from other will stop queue
+                    if self.song.queue != []:
+                        self.song.queue = []
+                    self.playSong(play_cmd[self.last_cmd][sID])
+            # if pause => unpause
+            elif len(input_) == 1 and self.song.isPause:
+                    self.song.unpause_song()
+            else:
+                print('Nothing to play')
+        # play <url>: play with URL input
+        except:
+            flag1 = input_[1].startswith((BASE_URL, SHORT_URL))
+            lmd = (lambda x: len(x) == 11) # checking YT video ID
+            ytID = input_[1].replace(BASE_URL, '').replace(SHORT_URL, '')
+            # if match YT link and youtube id video length == 1
+            # or length input == 11
+            if (flag1 and lmd(ytID)) or lmd(input_[1]):
+                song = downloadURL(ytID)
+                if song != {}:
+                    self.playSong(song)
+            else:
+                print('URL invalid')
+
 
     # show current volume
     # change volume with num
