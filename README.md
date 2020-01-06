@@ -21,8 +21,8 @@
 - [x] Add to queue, Remove in queue
 - [x] Custom playlist
 - [x] Copy current song link to clipboard
-- [] Play YT playlist
-- [] Vim style commands
+- [ ] Play YT playlist
+- [ ] Vim style commands
 
 # Dependences
 ```json
