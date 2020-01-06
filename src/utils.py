@@ -1,4 +1,5 @@
-
+from difflib import SequenceMatcher
+from re import search
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
@@ -15,3 +16,15 @@ def formatSeconds(total):
 
 def getSongId(url):
     return url.replace('/watch?v=', '')
+
+def str_similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
+
+    # check file name valid (regex)
+def is_valid_filename(name):
+    return search('[a-zA-Z0-9]', name)
+
+def filename_from_path(path):
+    # get filename only (for playlist)
+    # remove '.json' 1 time from tail
+    return path.split('/')[-1].replace('.json', '', 1)

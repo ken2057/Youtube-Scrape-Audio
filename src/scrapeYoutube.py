@@ -67,7 +67,7 @@ def singleSong(url, write_file=False):
             contentA = [listStrip(x.string) for x in a]
             contentA = [x for x in contentA if x not in ['']] #'Recommended for you'
             for k, v in zip(order, contentA):
-                content[k] = listStrip(v)
+                content[k] = listStrip(v).replace('Recommended for you', 'Recomend')
             # check valid
             content = isValidSong(content)
             if content != None:

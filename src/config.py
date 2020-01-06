@@ -1,5 +1,5 @@
 # max song per list
-SONG_PER_LIST = 6
+SONG_PER_LIST = 15
 
 # base url
 SHORT_URL = 'https://youtu.be/'
@@ -20,6 +20,10 @@ ERROR_PATH = 'error.log'
 
 # json format
 JSON_FORMAT = ['id', 'title', 'time', 'channel', 'views']
+
+# playlist folder
+PLAYLIST_FOLDER = 'json/playlist/'
+PLAYLIST_AUDIO_FOLDER = 'audio/playlist/'
 
 # audio download folder
 DOWN_FOLDER = 'audio/'
@@ -65,11 +69,19 @@ CMD = {
     'previous_info':        ['previ'],                                  # show previous song info
     'play_downloaded':      ['pd', 'playdowns', 'playdownloaded'],      # play all in downloaded
     'queue':                ['queue', 'q'],                             # show queue
+    'queue_add':            ['qadd', 'qa'],                             # add song to queue
+    'queue_remove':         ['qremove', 'qr'],                          # remove song in queue
     'queue_shuffle':        ['qsf', 'qshuffle'],                        # on/off shuffle queue
     'copy':                 ['copy', 'cp'],                             # copy current song url
     'delete':               ['delete', 'del'],                          # delete song/songs
     'repeat':               ['repeat', 're'],                           # repeat/unrepeat curent song
     'set_next':             ['setnext', 'setn'],                        # set next song
-    'queue_add':            ['qadd', 'qa'],                         # add song to queue
-    'queue_remove':         ['qremove', 'qr'],                      # remove song in queue
+    'playlist':             ['playlist', 'pl'],                         # show playlist
+    'play_playlist':        ['playpl', 'ppl'],                          # play playlist
+    'new_playlist':         ['newpl', 'npl'],                           # new playlist
+    'rename_playlist':      ['renamepl', 'repl'],                       # rename playlist
+    'delete_playlist':      ['delpl', 'dpl'],                           # delete playlist
+    'playlist_add':         ['pladd', 'pla'],                           # add son go to playlist
+    'playlist_remove':      ['plremove', 'plre', 'plr'],                # remove song in playlist
+    'playlist_info':        ['plinfo', 'pli']                           # playlist info
 }

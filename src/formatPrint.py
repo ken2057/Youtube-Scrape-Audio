@@ -1,3 +1,4 @@
+from tabulate import tabulate
 from os import system
 import platform
 # ------------------------------------------------------------------------------
@@ -38,15 +39,67 @@ def printSongs(listSong, page, totalPage, note=None):
     if note != None:
         print(note)
 
-def writeSongQueue(song):
+def printSongQueue(song):
     print('[x]', song.curSong['title'])
-    for i, s in enumerate([song.nextSong] + song.queue, 1):
+    songs = [song.nextSong] + song.queue
+    for i, s in enumerate([x for x in songs if x != {}], 1):
         print('[%s] %s'%(i, s['title']))
     print()
+
+def printAllPlaylist(allPl):
+    clearScreen()
+    # get file name only
+
+    allPl = [{x.split('\\')[-1].replace('.json', '')} for x in allPl]
+    print('All playlist')
+    print(tabulate(allPl, showindex=True, headers=['Name']))
+    print('-'*20)
+    print("Use 'playlist|pl <index>' to select playlist")
+
+def printSongSimple(
+        listSong, 
+        showView=False, 
+        title=None, note=None, 
+        curPage=1, maxPage=1):
+    if curPage > maxPage:
+        return
+    clearScreen()
+    if title != None:
+        print(title)
+    songs = []
+    # create format to use tabulate
+    for i, song in enumerate(listSong, 0):
+        s = {
+            'sID': i,
+            'Title': song['title'].strip(' \t'),
+            'Length': song['time'].strip(' \t'),
+            'Channel': song['channel'].strip(' \t')
+        }
+        # if title to long, get 47 char and add '...'
+        if len(s['Title']) > 50:
+            s['Title'] = s['Title'][:47]+'...'
+        if showView:
+            s['Views'] = song['views'].replace(' views', '').strip(' \t')
+        songs.append(s)
+
+    print(tabulate(songs, headers="keys") )
+    print('-'*20)
+    print('Current page: %s/%s'%(curPage, maxPage))
+    if note != None:
+        print(note)
+    
 
 def printHelp():
     print()
     print('Help!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+    print()
+    print('Note:')
+    print("   '*': multiable")
+    print('   range: syntax <min_num>-<max_num> (ex: 1-3)')
+    print('   [...]: optional')
+    print("   '|': or")
+    print("   sID: song ID")
+    print("   pl: playlist")
     print()
     print('$ downs|d <page>\t\t\t: Show downloaded song')
     print('$ search|s <query>\t\t\t: Search song with query')
@@ -59,8 +112,18 @@ def printHelp():
     print()
     print('$ queue|q\t\t\t\t: Show current queue')
     print('$ qshuffle|qsf\t\t\t\t: Turn ON/OFF queue shuffle')
-    print('$ qadd|qa [sID|URL]*\t\t\t: Add song to queue, if don\'t have input add all song in current page')
-    print('$ qremove|qr [sID]*\t\t\t\t: Remove song in queue with sID (can remove many), if don\' have sID, remove all queue')
+    print('$ qadd|qa [sID|URL]*\t\t\t: Add song to queue, if no params, add all song in current page')
+    print('$ qremove|qr [sID]*\t\t\t: Remove song in queue w/ sID, if no params, remove all queue')
+    print()
+    print('$ playlist|pl [index|name]\t\t: Show all pl, show song in pl w/ pl index or pl name (selected that pl)')
+    print('$ plinfo|pli \t\t\t\t: Show all song of selected pl')
+    print('$ playpl|ppl [index|name]\t\t: Play current pl or play pl w/ pl index or pl name')
+    print('$ pladd|pla [range|sID]*\t\t: If no params add current song to pl else add song from range sID or w/ sID')
+    print('$ plre|plr [range|sID]*\t\t\t: If no params remove all song in pl else remove song from range sID or w/ sID')
+    print()
+    print('$ newpl|npl [name]\t\t\t: Create new pl with name')
+    print('$ renamepl|repl [name]\t\t\t: Rename current pl seletected')
+    print('$ delpl|dpl [index|name]*\t\t: Delete pl with index/name')
     print()
     print('$ next|n\t\t\t\t: Play next song')
     print('$ nexti|ni\t\t\t\t: Show next song info')

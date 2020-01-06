@@ -11,6 +11,19 @@
 ### After playing 70% of current song, it will download next song
 <hr>
 
+# Features:
+- [x] Search/Play song
+- [x] Store song
+- [x] Play song with youtube link|video id
+- [x] Delete songs in downloaded
+- [x] Repeat/Unrepeat
+- [x] Set next song
+- [x] Add to queue, Remove in queue
+- [x] Custom playlist
+- [x] Copy current song link to clipboard
+- [] Play YT playlist
+- [] Vim style commands
+
 # Dependences
 ```json
 python3
@@ -20,6 +33,7 @@ requests (python)
 beautifulsoup4 (python)
 pygame==2.0.0.dev6 (python) //I need 2.0.0 to use pygame.mixer.music.unload()
 pyperclip (python)
+tabulate (python)
 ```
 <hr>
 
@@ -88,43 +102,61 @@ $ ytsa // active script from any path
 # Usage
 ## All command
 ```
-$ downs|d <page>                    : Show downloaded song
-$ search|s <query>                  : Search song with query
-$ songs <page>                      : Show recommend song based on YT
+Note:
+   '*': multiable
+   range: syntax <min_num>-<max_num> (ex: 1-3)
+   [...]: optional
+   '|': or
+   sID: song ID
+   pl: playlist
 
-$ play|p <sID>                      : Play song from 'songs/search/downs' current page
-$ play|p <URL>|<YT_ID>              : Play song youtube url or youtube video id
+$ downs|d <page>                        : Show downloaded song
+$ search|s <query>                      : Search song with query
+$ songs <page>                          : Show recommend song based on YT
 
-$ playdowns|pd                      : Play all sone in downloaded
+$ play|p <sID>                          : Play song from songs/search/downs current page
+$ play|p <URL>|<YT_ID>                  : Play song youtube url or youtube video id
 
-$ queue|q                           : Show current queue
-$ qshuffle|qsf                      : Turn ON/OFF queue shuffle
-$ qadd|qa [sID|URL]*                : Add song to queue, if don\'t have input add all song in current page
-$ qremove|qr [sID]*                 : Remove song in queue with sID (can remove many), if don\' have sID, remove all queue
+$ playdowns|pd                          : Play all sone in downloaded
 
-$ next|n                            : Play next song
-$ nexti|ni                          : Show next song info
-$ setnext|setn <sID>                : Set next song from songs/search/downs curren page
+$ queue|q                               : Show current queue
+$ qshuffle|qsf                          : Turn ON/OFF queue shuffle
+$ qadd|qa [sID|URL]*                    : Add song to queue, if no params, add all song in current page
+$ qremove|qr [sID]*                     : Remove song in queue w/ sID, if no params, remove all queue
 
-$ prev                              : Play previous song
-$ previ                             : Show previous song info
+$ playlist|pl [index|name]              : Show all pl, show song in pl w/ pl index or pl name (selected that pl)
+$ plinfo|pli                            : Show all song of selected pl
+$ playpl|ppl [index|name]               : Play current pl or play pl w/ pl index or pl name
+$ pladd|pla [range|sID]*                : If no params add current song to pl else add song from range sID or w/ sID
+$ plre|plr [range|sID]*                 : If no params remove all song in pl else remove song from range sID or w/ sID
 
-$ volume|v                          : Show current volume level
-$ volume|v <float>                  : Set volume level
+$ newpl|npl [name]                      : Create new pl with name
+$ renamepl|repl [name]                  : Rename current pl seletected
+$ delpl|dpl [index|name]*               : Delete pl with index/name
 
-$ pause|unpause|play|P              : Pause|Unpause
-$ skip <second>                     : Skip song time from current time
-$ info                              : Show information of current song
-$ copy|cp                           : Copy current song url to clipboard
-$ repeat|re [time]                  : Repeat\Un-repeat current song x time, (not input time, it will run forever)
+$ next|n                                : Play next song
+$ nexti|ni                              : Show next song info
+$ setnext|setn <sID>                    : Set next song from songs/search/downs curren page
 
-$ cls|clear                         : Clear screen
-$ help|h                            : Show this
+$ prev                                  : Play previous song
+$ previ                                 : Show previous song info
 
-$ delete|del <sID> [sID]*           : Delete song from downloaded, can delete many
-$ delete-all                        : Delete all the song in audio/
+$ volume|v                              : Show current volume level
+$ volume|v <float>                      : Set volume level
 
-$ exit                              : Surely is Exit
+$ pause|unpause|play|P                  : Did what they say
+$ skip <second>                         : Skip song time from current time
+$ info                                  : Show information of current song
+$ copy|cp                               : Copy current song url to clipboard
+$ repeat|re [time]                      : Repeat\\Un-repeat current song x time, (not input time, it will run forever)
+
+$ cls|clear                             : Clear screen
+$ help|h                                : Show this
+
+$ delete|del <sID> [sID]*               : Delete song from downloaded, can delete many
+$ delete-all                            : Delete all the song in audio/, and json file
+
+$ exit                                  : Surely is Exit
 ```
 ## Example
 ```js

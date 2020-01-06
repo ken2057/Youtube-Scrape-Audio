@@ -1,6 +1,6 @@
 from glob import glob
 from json import load, dump
-from os import remove
+from os import remove, path, rename
 from datetime import datetime
 from traceback import TracebackException
 import logging
@@ -8,6 +8,7 @@ import logging
 from src.config import (
     JSON_DOWNLOADED_PATH, 
     JSON_MCONFIG_PATH,
+    PLAYLIST_FOLDER,
     JSON_NAME_PATH, 
     DOWN_FOLDER, 
     COOKIE_PATH,
@@ -51,6 +52,9 @@ def writeErrorLog(error, data=None):
     # some error will not need to print out
     if len([x for x in ERROR_HIDE if x in str(error)]) == 0:
         logging.error('\n'+str(error))
+    
+def getFilesInFolder(path):
+    return [x.replace('\\', '/') for x in glob(path+'*')]
 
 # -----------------------------------------------------------------------------
 # OTHER
@@ -59,6 +63,10 @@ def updateConfig(newData):
     data = readJson(JSON_MCONFIG_PATH)
     data.update(newData)
     writeJson(data, JSON_MCONFIG_PATH)
+
+# delete file
+def deleteFile(path):
+    remove(path)
 
 # delete songs in downloaded
 def deleteSongs(songs):
@@ -75,16 +83,19 @@ def deleteSongs(songs):
     except Exception as ex:
         writeErrorLog(ex)
 
-def deleteAllSong():
+def deleteAll(playlist=False):
     files = glob(DOWN_FOLDER+'/*')
-    if (len(files) == 0):
-        print('Nothing to delete')
-        return
-    print('Deleting '+str(len(files))+' in audio/')
+    print('Deleting '+str(len(files))+' files in audio/')
     for f in files:
         remove(f)
     writeJson([], JSON_DOWNLOADED_PATH)
     writeJson([], JSON_NAME_PATH)
+
+    if playlist:
+        pls = glob(PLAYLIST_FOLDER+'/*')
+        print('Deleting '+str(len(pls))+' files in json/playlist/')
+        for pl in pls:
+            remove(pl)
     # delete log
     try:
         remove(ERROR_PATH)
@@ -102,3 +113,25 @@ def getInDownloaded(song):
         if song['id'] == s['id']:
             return s
     return song
+
+# -----------------------------------------------------------------------------
+# PLAYLIST
+# -----------------------------------------------------------------------------
+def createPlaylist(name):
+    pathFile = PLAYLIST_FOLDER + name + '.json'
+    # check exists file
+    if path.exists(pathFile):
+        print('Playlist already exists')
+        return False
+    writeJson([], pathFile)
+    return True
+
+def renamePlaylist(plPath, newName):
+    # check exists path
+    if not path.exists(plPath):
+        print('Playlist not exists')
+        return False
+    
+    new_path = PLAYLIST_FOLDER + newName + '.json'
+    rename(plPath, new_path)
+    return new_path

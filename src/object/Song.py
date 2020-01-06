@@ -10,6 +10,7 @@ from src.config import JSON_MCONFIG_PATH, JSON_DOWNLOADED_PATH
 # ------------------------------------------------------------------------------
 class Song():
 	mixer = None
+	curPlaylist = None
 	isPlaying = False
 	isFinish = False
 	isPause = False
@@ -75,7 +76,9 @@ class Song():
 
 	def down_next_song(self):
 		# played 70% of the song, download next song
-		if 'path' not in self.nextSong or self.nextSong == {}:
+		flag = self.curSong != {}
+		flag2 = 'path' not in self.nextSong or self.nextSong == {}
+		if flag and flag2:
 			# move down calcTime and if to reduce usage
 			total = calcTime(self.curSong['time'])
 			if self.time >= total * 0.7 and 'downloading' not in self.nextSong:
@@ -102,6 +105,8 @@ class Song():
 		self.nextSong = copy(self.queue[pos])
 		self.nextSong['unchange'] = True
 		self.queue.pop(pos)
+		if self.queue == []:
+			self.curPlaylist = None
 
 	def select_nextSong(self):
 		# current not playing
@@ -141,6 +146,16 @@ class Song():
 					self.nextSong = song
 					break
 	
+	def remove_queue(self):
+		self.queue = []
+		self.curPlaylist = None
+
+	# if current playlist add new song
+	# add it to queue
+	def add_song_playlist_queue(self, playlistName, song):
+		if self.curPlaylist == playlistName:
+			self.queue.append(song)
+
 	def reset_play_value(self):
 		self.isPause = False
 		self.isFinish = False
