@@ -443,8 +443,7 @@ class Main():
             print('Please add sID to delete')
             return
         if self.downs == []:
-            print("Use 'downs|d' to get list downloaded")
-            return
+            self.downs = readJson(JSON_DOWNLOADED_PATH)
         
         self.song.isEdit = True
         # check input
@@ -453,9 +452,10 @@ class Main():
         # so thread will not check nextSong when remove curSong 
         # (error when repeat on)
         self.song.isEdit = True
-        for sID in input_:
+        for value in input_:
+            # when delete with sID
             try:
-                song = self.downs[int(sID)]
+                song = self.downs[int(value)]
                 # equal current song
                 if (    self.song.curSong != {} 
                     and self.song.curSong['id'] == song['id']):
@@ -472,8 +472,15 @@ class Main():
                 #     and self.song.prevSong['id'] == song['id']):
                 #         self.song.prevSong = {}
                 listSong.append(song)
+                print('Deleting: ', song['title'])
             except:
-                print('- Invalid sID:', sID)
+                #check input range
+                if isinstance(value, str) and '-' in value:
+                    range_ = self.input_range(value)
+                    if range_ != None:
+                        input_ += list(range_)
+                        continue
+                print('- Invalid value:', value)
         # remove
         deleteSongs(listSong)
         self.song.isEdit = False
@@ -523,21 +530,30 @@ class Main():
                 print('Nothing to add')
         else:
             # add multi song
-            for sID in input_[1:]:
+            for sID in input_:
                 try:
                     if self.last_cmd != None:
-                        self.song.queue.append(self.get_play_cmd(int(sID)))
-                        print('sID %s added to queue'%(sID))
+                        song = self.get_play_cmd(int(sID))
+                        if song not in self.song.queue:
+                            self.song.queue.append(song)
+                            print('sID %s added to queue'%(sID))
                 # play <url>: play with URL input
                 except:
+                    # check is url?
                     flag, ytID = self.regexURL(sID)
                     if flag:
                         song = downloadURL(ytID)
                         if song != {}:
                             self.song.queue.append(song)
                             print('Song %s added to queue'%(ytID))
-                    else:
-                        print('URL invalid: '+sID)
+                            continue
+                    # check input range
+                    if isinstance(value, str) and '-' in sID:
+                        range_ = self.input_range(sID)
+                        if range_ != None:
+                            input_ += list(range_)
+                            continue
+                    print('Invalid value:', sID)
         # song not play, play it
         if self.musicThread == None and self.song.queue != []:
             self.playSong(self.song.queue[0])
@@ -547,14 +563,23 @@ class Main():
     def _queue_remove(self, input_):
         # remove 1 song
         if len(input_) > 0:
+            listsID = []
             for sID in input_:
                 try:
-                    sID = int(sID)
-                    if len(self.song.queue) >= sID and sID >= 1:
-                        self.song.queue.pop(sID)
-                        print('Song %s removed'%(sID))
+                    listsID.append(int(sID))
                 except:
-                    print('Invalid '+sID)
+                    # check input range
+                    if '-' in sID:
+                        range_ = self.input_range(sID)
+                        if range_ != None:
+                            input_ += list(range_)
+                            continue
+                    print('Invalid value:', sID)
+            # remove duplicate, and remove
+            for pos in list(dict.fromkeys(listsID)).sort(reverse=True):
+                if len(self.song.queue) >= pos and pos >= 1:
+                    self.song.queue.pop(pos)
+                    print('Song %s removed'%(pos))
         # remove queue
         else:
             self.song.remove_queue()
@@ -760,7 +785,7 @@ class Main():
                 try:
                     # when input is 1-3
                     # get song index 1, 2, 3
-                    if '-' in value:
+                    if isinstance(value, str) and '-' in value:
                         range_ = self.input_range(value)
                         if range_ == None:
                             print('Invalid range: ' + value )
@@ -774,7 +799,7 @@ class Main():
                 except:
                     print('Invalid index: ' + value)
             # remove song
-            for song in songRemove:
+            for song in songRemove.sort(reverse=True):
                 if song in self.playlist['songs']:
                     self.playlist['songs'].remove(song)
                     print('Removed: '+ song['title'])
