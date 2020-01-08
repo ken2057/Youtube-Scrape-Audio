@@ -23,6 +23,7 @@ from src.config import (
     SHORT_URL,
     BASE_URL,
     PLAYLIST_FOLDER,
+    PLAYLIST_PARAM,
 )
 from src.createThread import (
     thrSong, 
@@ -40,6 +41,7 @@ from src.formatPrint import (
 from src.audio import (
     downloadAudio, 
     downloadURL,
+    getInfoYTPlaylist,
 )
 from src.utils import (
     str_similar, 
@@ -114,13 +116,17 @@ class Main():
         else:
             self.song.set_mixer(True)
 
-    def regexURL(self, string):
+    def regexSongURL(self, string):
         # if match YT link and youtube id video length == 1
         # or length input == 11
-        flag1 = string.startswith((BASE_URL, SHORT_URL))
+        flag = string.startswith((BASE_URL, SHORT_URL))
         lmd = (lambda x: len(x) == 11) # checking YT video ID
         ytID = string.replace(BASE_URL, '').replace(SHORT_URL, '')
-        return [(flag1 and lmd(ytID)) or lmd(string), ytID]
+        return [(flag and lmd(ytID)) or lmd(string), ytID]
+
+    def isPlaylistURL(self, string):
+        flag = string.startswith((BASE_URL))
+        return flag and PLAYLIST_PARAM in string
 
     def get_play_cmd(self, sID=None):
         # check last command used
@@ -168,12 +174,14 @@ class Main():
             except:
                 return None
 
-    def get_page(self, input_):
+    def convert_int(self, input_, default=0):
         try:
             page = int(input_[0]) - 1
+            if page < 0:
+                return default
+            return page
         except:
-            page = 0
-        return page
+            return default
 
     # this function will check input_ is a name of playlist
     # if is a name, add playlist to self.playlist
@@ -239,7 +247,7 @@ class Main():
 
     # show song recommended by YT
     def _songs(self, input_):
-        page = self.get_page(input_)
+        page = self.convert_int(input_)
         # read json
         allSong = readJson()
         # check when input page too low or high
@@ -266,7 +274,7 @@ class Main():
 
     # show downoaded song
     def _downloaded(self, input_):
-        page = self.get_page(input_)
+        page = self.convert_int(input_)
         self.downs = readJson(JSON_DOWNLOADED_PATH)
         # check file exist
         # if not remove from json
@@ -331,7 +339,7 @@ class Main():
                 print('Nothing to play')
         # play <url>: play with URL input
         except:
-            flag, ytID = self.regexURL(input_[0])
+            flag, ytID = self.regexSongURL(input_[0])
             if flag:
                 song = downloadURL(ytID)
                 if song != {}:
@@ -530,30 +538,48 @@ class Main():
                 print('Nothing to add')
         else:
             # add multi song
-            for sID in input_:
+            for value in input_:
                 try:
                     if self.last_cmd != None:
-                        song = self.get_play_cmd(int(sID))
+                        song = self.get_play_cmd(int(value))
                         if song not in self.song.queue:
                             self.song.queue.append(song)
-                            print('sID %s added to queue'%(sID))
+                            print('sID %s added to queue'%(value))
+                    else:
+                        raise Exception()
                 # play <url>: play with URL input
                 except:
                     # check is url?
-                    flag, ytID = self.regexURL(sID)
+                    flag, ytID = self.regexSongURL(value)
                     if flag:
                         song = downloadURL(ytID)
                         if song != {}:
                             self.song.queue.append(song)
                             print('Song %s added to queue'%(ytID))
                             continue
+                    # input is youtube playlist url
+                    if self.isPlaylistURL(value):
+                        print('Found Youtube playlist link:', value)
+                        print('Get songs in playlist')
+                        start = input('Set start song (default 1): ')
+                        end = input('Set total song (default 20): ')
+                        # get songs in playlist
+                        songs = getInfoYTPlaylist(
+                            value, 
+                            self.convert_int(start, 1), 
+                            self.convert_int(end, 20)
+                        )
+                        print('Total song in YT playlist:', len(songs))
+                        # add song to queue
+                        self.song.queue += songs
+                        continue
                     # check input range
-                    if isinstance(value, str) and '-' in sID:
-                        range_ = self.input_range(sID)
+                    if isinstance(value, str) and '-' in value and len(value) <= 5:
+                        range_ = self.input_range(value)
                         if range_ != None:
                             input_ += list(range_)
                             continue
-                    print('Invalid value:', sID)
+                    print('Invalid value:', value)
         # song not play, play it
         if self.musicThread == None and self.song.queue != []:
             self.playSong(self.song.queue[0])
@@ -639,7 +665,9 @@ class Main():
     # create new empty playlist
     def _new_playlist(self, input_):
         if len(input_) == 0:
-            name = input('Input name new playlist: ')
+            name = input("Input name new playlist ('.c' to cancel): ")
+            if name == '.c':
+                return
         else:
             name = input_[0]
 
@@ -660,7 +688,7 @@ class Main():
 
         if len(input_) == 0:
             print('Rename playlist ', filename_from_path(self.playlist['path']))
-            new_name = input("Input new name (type '.c' to cancle): ")
+            new_name = input("Input new name ('.c' to cancle): ")
         else:
             new_name = input_[0]
 
@@ -723,7 +751,7 @@ class Main():
             for value in input_:
                 # when input is 1-3
                 # get song index 1, 2, 3
-                if '-' in value:
+                if '-' in value and len(value) <= 5:
                     range_ = self.input_range(value)
                     if range_ == None:
                         print('Invalid range: ' + value )
@@ -738,14 +766,36 @@ class Main():
                 # get song from Youtube URL/ID
                 except:
                     # flag is valid url/video id
-                    flag, ytID = self.regexURL(value)
+                    flag, ytID = self.regexSongURL(value)
                     song = {}
                     if flag:
                         song = downloadURL(ytID)
+                    # check playlist url
+                    else:
+                        if self.isPlaylistURL(value):
+                            print('Found Youtube playlist link:', value)
+                            print('Get songs in playlist')
+                            start = input('Set start song (default 1): ')
+                            end = input('Set total song (default 20): ')
+                            # get songs in playlist
+                            song = getInfoYTPlaylist(
+                                value, 
+                                self.convert_int(start, 1), 
+                                self.convert_int(end, 20)
+                            )
+                            flag = True
+                            print('Total song in YT playlist:', len(song))
+
                     if song == {} or not flag:
                         print('Invalid value: '+ value)
                         continue
-                    songAdd.append(song)
+                    # song is dict = 1 song
+                    if isinstance(song, dict):
+                        songAdd.append(song)
+                    # song is list = many song from youtube palylist
+                    elif isinstance(song, list):
+                        for s in song:
+                            songAdd.append(s)
 
         print('Add song to playlist:', filename_from_path(self.playlist['path']))
         for song in songAdd:

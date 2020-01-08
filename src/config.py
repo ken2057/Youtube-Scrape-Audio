@@ -5,6 +5,7 @@ SONG_PER_LIST = 15
 SHORT_URL = 'https://youtu.be/'
 BASE_URL = 'https://www.youtube.com/watch?v='
 QUERY_URL = 'https://www.youtube.com/results?search_query='
+PLAYLIST_PARAM = 'list=RD'
 
 # json save all the song have been clicked
 JSON_NAME_PATH = 'json/link.json'

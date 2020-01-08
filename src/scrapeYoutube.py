@@ -109,14 +109,3 @@ def fetchQuery(query):
     except Exception as ex:
         writeErrorLog(ex)
         return []
-
-def playlist(url):
-    page = get(url)
-    # soups = BS(page.content, 'html.parser').find(class_='watch-queue-items-container')
-    # , class_='yt-uix-scroller-scroll-unit'
-    # class_='playlist-video'
-    # .find(class_='playlist-items')
-
-    soups = BS(str(page.content).replace('\\n', '\n'), 'html.parser')
-
-    print(soups.prettify().replace('\\n', '\n').encode('utf-8'))

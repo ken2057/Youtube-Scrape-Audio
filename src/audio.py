@@ -23,6 +23,18 @@ def sendClickedSong(song):
     with YoutubeDL(ydl_opts) as ydl:
         ydl.extract_info(song['id'], False)
 
+def songInfoFormat(song, fileName):
+    path = '.'.join(fileName.split('.')[:-1])
+    return {
+        'id': song['id'], 
+        'channel': song['uploader'], 
+        'title': song['title'], 
+        'views': song['view_count'], 
+        'time': formatSeconds(song['duration']), 
+        'path': path + '.mp3'
+    }
+
+
 def downloadAudio(song):
     try:
         # check exists mp3
@@ -64,21 +76,29 @@ def downloadURL(ytID):
             print('\nDownloading '+ytID, end='')
             with YoutubeDL(ydl_opts) as ydl:
                 t = ydl.extract_info(ytID, True)
-                name = '.'.join(ydl.prepare_filename(t).split('.')[:-1])
-                song = {
-                    'id': t['id'],
-                    'channel': t['uploader'],
-                    'title': t['title'],
-                    'views': t['view_count'],
-                    'time': formatSeconds(t['duration']),
-                    'path': name + '.mp3'
-                }
                 # write to download
-                writeDownloaded(song)
+                writeDownloaded(songInfoFormat(t, ydl.prepare_filename(t)))
         return song
     except Exception as ex:
         writeErrorLog(ex)
         return {}
+
+def getInfoYTPlaylist(url, start=1, end=20):
+    try:
+        ydl_opts['playliststart'] = start
+        ydl_opts['playlistend'] = end
+        ydl_opts.pop('noplaylist')
+        print('Getting songs in playlist')
+        with YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, False)
+            songs = []
+            for song in info['entries']:
+                songs.append(songInfoFormat(song, ydl.prepare_filename(song)))
+            return songs
+
+    except Exception as ex:
+        writeErrorLog(ex)
+        return []
 
 def playSound(song):
     # create
@@ -111,4 +131,4 @@ def playSound(song):
             sleep(1) # reduce cpu usage and add time
     except Exception as ex:
         writeErrorLog(ex)
-        
+
