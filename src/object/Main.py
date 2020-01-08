@@ -612,12 +612,13 @@ class Main():
         if len(input_) == 0 and self.playlist['path'] == '':
             print('Please select playlist')
             return
-        # play playlist 
-        else:
+        # play playlist with input
+        elif len(input_) > 0:
             try:
                 self.playlist['songs'] = readJson(self.listPlaylist[int(input_[0])])
                 self.playlist['path'] = self.listPlaylist[int(input_[0])]
             except:
+                print(input_)
                 if not self.match_name_playlist(input_[0]):
                     return
         #
@@ -632,6 +633,8 @@ class Main():
         if self.musicThread == None and self.song.queue != []:
             self.playSong(self.song.queue[0])
             self.song.queue = self.song.queue[1:]
+        else:
+            self._next()
 
     # create new empty playlist
     def _new_playlist(self, input_):
@@ -744,6 +747,7 @@ class Main():
                         continue
                     songAdd.append(song)
 
+        print('Add song to playlist:', filename_from_path(self.playlist['path']))
         for song in songAdd:
             # check song not in playlist
             if (len([x for x in self.playlist['songs'] 
@@ -755,10 +759,10 @@ class Main():
                         song
                     )
                     isChanged = True
-                    print('Added '+ song['title'])
+                    print('+ Added '+ song['title'])
             # song already in playlist
             else:
-                print('Song %s already in playlist %s'
+                print('- Song %s already in playlist %s'
                     %(song['title'], 
                         filename_from_path(self.playlist['path'])))
 

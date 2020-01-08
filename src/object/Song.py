@@ -53,6 +53,9 @@ class Song():
 		self.prevSong = copy(self.curSong)
 		self.curSong = copy(self.nextSong)
 		self.nextSong = {}
+		# re-add song to queue if playing
+		if self.queue != {}:
+			self.queue.append(copy(self.prevSong))
 		# select song different with prevSong
 		# self.select_nextSong()
 		thrFetchSong(self.curSong['id'])
