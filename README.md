@@ -21,8 +21,7 @@
 - [x] Add to queue, Remove in queue
 - [x] Custom playlist
 - [x] Copy current song link to clipboard
-- [ ] Play YT playlist
-- [ ] Vim style commands
+- [x] Play YT playlist
 
 # Dependences
 ```json
@@ -127,7 +126,7 @@ $ qremove|qr [sID]*                     : Remove song in queue w/ sID, if no par
 $ playlist|pl [index|name]              : Show all pl, show song in pl w/ pl index or pl name (selected that pl)
 $ plinfo|pli                            : Show all song of selected pl
 $ playpl|ppl [index|name]               : Play current pl or play pl w/ pl index or pl name
-$ pladd|pla [range|sID]*                : If no params add current song to pl else add song from range sID or w/ sID
+$ pladd|pla [range|sID|URL|YT_ID]*      : If no params add current song to pl else add song from range sID or w/ sID
 $ plre|plr [range|sID]*                 : If no params remove all song in pl else remove song from range sID or w/ sID
 
 $ newpl|npl [name]                      : Create new pl with name
