@@ -61,8 +61,8 @@ def printSongSimple(
         showView=False, 
         title=None, note=None, 
         curPage=1, maxPage=1):
-    if curPage > maxPage:
-        return
+    # if curPage > maxPage:
+    #     return
     clearScreen()
     if title != None:
         print(title)

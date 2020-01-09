@@ -54,7 +54,7 @@ class Song():
 		self.curSong = copy(self.nextSong)
 		self.nextSong = {}
 		# re-add song to queue if playing
-		if self.queue != {}:
+		if self.queue != []:
 			self.queue.append(copy(self.prevSong))
 		# select song different with prevSong
 		# self.select_nextSong()
@@ -142,7 +142,6 @@ class Song():
 			self.queue = readJson(JSON_DOWNLOADED_PATH)
 			self.set_next_from_queue()
 			return
-
 		# select song different with prevSong
 		for song in listSong:
 			if self.prevSong == {} or song['id'] != self.prevSong['id']:

@@ -308,7 +308,7 @@ class Main():
             title='Downloaded', 
             note="Use 'play|p <sID>' to play",
             curPage=page + 1,
-            maxPage=max(int(m/SONG_PER_LIST), 1)
+            maxPage=max(int(m/SONG_PER_LIST) + 1, 1)
         )
         self.last_cmd = 'd'
 
