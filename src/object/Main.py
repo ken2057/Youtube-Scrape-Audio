@@ -892,7 +892,7 @@ class Main():
         else:
             print(result)
             # reset when invalid username/password
-            if result == 'Invalid username/password':
+            if 'Invalid' in result:
                 self.user.reset_all()
     
     def _export(self, input_):
@@ -937,5 +937,5 @@ class Main():
         result = self.user.export_(exportPL)
         print(result)
         # reset when invalid username/password
-        if result == 'Invalid username/password':
+        if 'Invalid' in result:
             self.user.reset_all()
