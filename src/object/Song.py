@@ -104,6 +104,8 @@ class Song():
 		pos = 0
 		if self.isShuffle:
 			pos = randint(0, len(self.queue))
+			while self.queue[pos] == self.curSong:
+				pos = randint(0, len(self.queue))
 			
 		self.nextSong = copy(self.queue[pos])
 		self.nextSong['unchange'] = True

@@ -123,7 +123,7 @@ def createPlaylist(name):
     if path.exists(pathFile):
         print('Playlist already exists')
         return False
-    writeJson([], pathFile)
+    writeJson({'name': name, 'songs': []}, pathFile)
     return True
 
 def renamePlaylist(plPath, newName):
@@ -131,7 +131,21 @@ def renamePlaylist(plPath, newName):
     if not path.exists(plPath):
         print('Playlist not exists')
         return False
+    # rename id in playlist
+    data = readJson(plPath)
+    data['name'] = newName
+    writeJson(data, plPath)
     
     new_path = PLAYLIST_FOLDER + newName + '.json'
     rename(plPath, new_path)
     return new_path
+
+def createImportPlaylist(playlists):
+    for pl in playlists:
+        try:
+            pathFile = PLAYLIST_FOLDER + pl['name'] + '.json'
+            writeJson(pl, pathFile)
+            print('+ Added playlist:', pl['name'])
+        except:
+            print('- Failed add playlists', pl['name'])
+    print('%s playlists improted'%(len(playlists)))

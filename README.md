@@ -22,6 +22,7 @@
 - [x] Custom playlist
 - [x] Copy current song link to clipboard
 - [x] Play YT playlist
+- [x] Export/Import playlist (from my simple api, mongodb cluster)
 
 # Dependences
 ```json
@@ -148,6 +149,10 @@ $ skip <second>                         : Skip song time from current time
 $ info                                  : Show information of current song
 $ copy|cp                               : Copy current song url to clipboard
 $ repeat|re [time]                      : Repeat\\Un-repeat current song x time, (not input time, it will run forever)
+
+$ login                                 : Change username, password
+$ import                                : Import all playlist from db (this is my api, mongodb cluster)
+$ export [all|index|playlist_name]      : Export playlist from db (this is my api, mongodb cluster)
 
 $ cls|clear                             : Clear screen
 $ help|h                                : Show this

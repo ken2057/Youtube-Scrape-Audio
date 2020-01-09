@@ -1,3 +1,7 @@
+# api url
+# API = 'http://127.0.0.1:5000/'
+API = 'https://youtube-scrape-audio-api.herokuapp.com/'
+
 # max song per list
 SONG_PER_LIST = 15
 
@@ -84,5 +88,8 @@ CMD = {
     'delete_playlist':      ['delpl', 'dpl'],                           # delete playlist
     'playlist_add':         ['pladd', 'pla'],                           # add son go to playlist
     'playlist_remove':      ['plremove', 'plre', 'plr'],                # remove song in playlist
-    'playlist_info':        ['plinfo', 'pli']                           # playlist info
+    'playlist_info':        ['plinfo', 'pli'],                          # playlist info
+    'login':                ['login'],                                  # login to use impoprt/expore
+    'import':               ['import'],                                 # import playlists saved
+    'export':               ['export'],                                 # export playlist
 }

@@ -13,6 +13,7 @@ from src.io import (
     createPlaylist,
     renamePlaylist,
     deleteFile,
+    createImportPlaylist,
 )
 from src.config import (
     JSON_DOWNLOADED_PATH, 
@@ -50,9 +51,11 @@ from src.utils import (
 )
 from src.scrapeYoutube import fetchQuery
 from src import Song
+from src.object.User import User
 
 class Main():
     def __init__(self):
+        self.user = User()
         self.song = Song()
         self.songs = []
         self.downs = []
@@ -99,7 +102,10 @@ class Main():
             'delete_playlist':  (lambda x: self._del_playlist(x[1:])),
             'playlist_add':     (lambda x: self._playlist_add(x[1:])),
             'playlist_remove':  (lambda x: self._playlist_remove(x[1:])),
-            'playlist_info':    (lambda x: self._playlist_info())
+            'playlist_info':    (lambda x: self._playlist_info()),
+            'login':            (lambda x: self._login()),
+            'import':           (lambda x: self._import()),
+            'export':           (lambda x: self._export(x[1:])),
         }   
 
     # play song with songInput
@@ -623,7 +629,7 @@ class Main():
         else:
             try:
                 self.playlist['path'] = self.listPlaylist[int(input_[0])]
-                self.playlist['songs'] = readJson(self.listPlaylist[int(input_[0])])
+                self.playlist['songs'] = readJson(self.listPlaylist[int(input_[0])])['songs']
             except:
                 # check input name of playlist 'self.match_name_playlist(str)'
                 # if not get suggest name
@@ -641,7 +647,7 @@ class Main():
         # play playlist with input
         elif len(input_) > 0:
             try:
-                self.playlist['songs'] = readJson(self.listPlaylist[int(input_[0])])
+                self.playlist['songs'] = readJson(self.listPlaylist[int(input_[0])])['songs']
                 self.playlist['path'] = self.listPlaylist[int(input_[0])]
             except:
                 print(input_)
@@ -817,7 +823,9 @@ class Main():
                         filename_from_path(self.playlist['path'])))
 
         if isChanged:
-            writeJson(self.playlist['songs'], self.playlist['path'])
+            data = readJson(self.playlist['path'])
+            data['songs'] = self.playlist['songs']
+            writeJson(data, self.playlist['path'])
 
     # remove song in playlist
     def _playlist_remove(self, input_):
@@ -859,10 +867,12 @@ class Main():
                     print('Removed: '+ song['title'])
                     isChanged = True
         if isChanged:
-            writeJson(self.playlist['songs'], self.playlist['path'])
+            data = readJson(self.playlist['path'])
+            data['songs'] = self.playlist['songs']
+            writeJson(data, self.playlist['path'])
 
     def _playlist_info(self):
-        self.playlist['songs'] = readJson(self.playlist['path'])
+        self.playlist['songs'] = readJson(self.playlist['path'])['songs']
         notes = []
         notes.append("Use 'ppl' to play playlist")
         notes.append("Use 'plr <sID>' to remove song")
@@ -872,3 +882,60 @@ class Main():
             note="\n".join(notes)
         )
         
+    def _login(self):
+        self.user.login_()
+
+    def _import(self):
+        result = self.user.import_()
+        if isinstance(result, dict):
+            createImportPlaylist(result['playlists'])
+        else:
+            print(result)
+            # reset when invalid username/password
+            if result == 'Invalid username/password':
+                self.user.reset_all()
+    
+    def _export(self, input_):
+        exportPL = []
+        # export current playlist
+        if len(input_) == 0:
+            if self.playlist['path'] == None and not self.select_playlist():
+                return
+            exportPL.append(readJson(self.playlist['path']))
+        else:
+            self.listPlaylist = getFilesInFolder(PLAYLIST_FOLDER)
+            # export all
+            if 'all' in input_:
+                for pl in self.listPlaylist:
+                    exportPL.append(readJson(pl))
+            else:
+                indexPL = []
+                filename = [filename_from_path(x) for x in self.listPlaylist]
+                for value in input_:
+                    try:
+                        indexPL.append(int(value))
+                    except:
+                        # when input playlist name
+                        if value in filename:
+                            indexPL += [filename.index(value)]
+                            continue
+                        # when input range
+                        if '-' in value and len(value) <= 5:
+                            range_ = self.input_range(value)
+                            if range_ == None:
+                                print('Invalid range: ' + value )
+                                continue
+                            # get song will be add
+                            else:
+                                indexPL += range_
+                                continue
+                        print('Invalid value:', value)
+
+                for i in list(dict.fromkeys(indexPL)):
+                    exportPL.append(readJson(self.listPlaylist[i]))
+
+        result = self.user.export_(exportPL)
+        print(result)
+        # reset when invalid username/password
+        if result == 'Invalid username/password':
+            self.user.reset_all()

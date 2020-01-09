@@ -22,7 +22,13 @@ def str_similar(a, b):
 
     # check file name valid (regex)
 def is_valid_filename(name):
-    return search('[a-zA-Z0-9]', name)
+    try:
+        # name not number only
+        _ = int(name)
+        print('Name much contain at least 1 character')
+        return False
+    except:
+        return search('[a-zA-Z0-9]', name)
 
 def filename_from_path(path):
     # get filename only (for playlist)
