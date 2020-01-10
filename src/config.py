@@ -5,6 +5,9 @@ API = 'https://youtube-scrape-audio-api.herokuapp.com/'
 # max song per list
 SONG_PER_LIST = 15
 
+# max time video will get (second)
+MAX_LENGTH_VIDEO = 3600 
+
 # base url
 SHORT_URL = 'https://youtu.be/'
 BASE_URL = 'https://www.youtube.com/watch?v='

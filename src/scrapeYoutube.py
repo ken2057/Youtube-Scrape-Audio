@@ -6,9 +6,10 @@ from src.config import (
     QUERY_URL, 
     COOKIE_PATH, 
     JSON_NAME_PATH,
+    MAX_LENGTH_VIDEO,
 )
 from src.io import writeErrorLog, writeJson
-from src.utils import getSongId
+from src.utils import getSongId, remove_emoji
 # ------------------------------------------------------------------------------
 # headers when send request (get english only)
 header={'accept-language':'en;q=0.9'}
@@ -39,14 +40,22 @@ def isValidSong(song):
             return None
     
     try:
-        splited = song['time'].split(': ')[1].replace('.', '').split(':')
-        # less than 1hour
-        flag1 = len(splited) > 2
-        # duration > 15min?
-        flag2 = int(splited[0]) >= 15
-        if flag1 or flag2:
+        # reverser list to easy calculate time
+        # from [minute, second] => [second, minute]
+        # from [hours, minute, second] => [second, minute, hours]
+        splited = song['time'].split(': ')[1].replace('.', '').split(':')[::-1]
+
+        # time from splited to multi [second, minute, hours] to second
+        time = [1, 60, 3600]
+        total_second = 0
+        for spl, t in zip(splited, time):
+            total_second += int(spl) * t
+        
+        if total_second >= MAX_LENGTH_VIDEO:
             return None
-        song['time'] = ':'.join(splited)
+
+        song['time'] = ':'.join(splited[::-1])
+    # error when don't have video length, or not correct format
     except:
         return None
 
@@ -71,6 +80,7 @@ def singleSong(url, write_file=False):
             # check valid
             content = isValidSong(content)
             if content != None:
+                content['title'] = remove_emoji(content['title'])
                 listContent.append(content)
         if not write_file:
             return listContent
@@ -93,7 +103,7 @@ def fetchQuery(query):
             # prevent error from channel information
             try:
                 song = {
-                    'title': listStrip(a.find('a').string),
+                    'title': remove_emoji(listStrip(a.find('a').string)),
                     'time': listStrip(a.find('span').string),
                     'id': getSongId(listStrip(a.find('a')['href'])),
                     'channel': listStrip(a.find_all('a')[1].string),

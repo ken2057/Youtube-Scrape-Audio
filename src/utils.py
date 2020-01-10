@@ -1,5 +1,6 @@
 from difflib import SequenceMatcher
 from re import search
+from emoji import get_emoji_regexp
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
@@ -34,3 +35,7 @@ def filename_from_path(path):
     # get filename only (for playlist)
     # remove '.json' 1 time from tail
     return path.split('/')[-1].replace('.json', '', 1)
+
+# remove emoji in string
+def remove_emoji(text):
+    return get_emoji_regexp().sub(u'', text)

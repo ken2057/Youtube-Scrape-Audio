@@ -34,6 +34,7 @@ beautifulsoup4 (python)
 pygame==2.0.0.dev6 (python) //I need 2.0.0 to use pygame.mixer.music.unload()
 pyperclip (python)
 tabulate (python)
+emoji (python)
 ```
 <hr>
 

@@ -16,7 +16,8 @@ from src.io import (
 )
 from src.utils import (
     getSongId,
-    formatSeconds
+    formatSeconds,
+    remove_emoji,
 )
 # ------------------------------------------------------------------------------
 def sendClickedSong(song):
@@ -28,7 +29,7 @@ def songInfoFormat(song, fileName):
     return {
         'id': song['id'], 
         'channel': song['uploader'], 
-        'title': song['title'], 
+        'title': remove_emoji(song['title']), 
         'views': song['view_count'], 
         'time': formatSeconds(song['duration']), 
         'path': path + '.mp3'
