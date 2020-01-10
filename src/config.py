@@ -95,4 +95,5 @@ CMD = {
     'login':                ['login'],                                  # login to use impoprt/expore
     'import':               ['import'],                                 # import playlists saved
     'export':               ['export'],                                 # export playlist
+    'usage':                ['usage'],                                  # get script usage
 }

@@ -114,6 +114,8 @@ def getInDownloaded(song):
             return s
     return song
 
+def getTotalFiles(path):
+    return len(glob(path+'/*'))
 # -----------------------------------------------------------------------------
 # PLAYLIST
 # -----------------------------------------------------------------------------

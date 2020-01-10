@@ -2,7 +2,9 @@ from tabulate import tabulate
 from os import system
 import platform
 # ------------------------------------------------------------------------------
-from src.config import SHORT_URL
+from src.config import SHORT_URL, DOWN_FOLDER
+from src.utils import folder_size
+from src.io import getTotalFiles
 # ------------------------------------------------------------------------------
 def changeTitle(title):
     system("title "+'\"'+str(title)+'\"')
@@ -88,6 +90,9 @@ def printSongSimple(
     if note != None:
         print(note)
     
+def printUsage():
+    print('+ audio/ size: %s MB'%(folder_size(DOWN_FOLDER)))
+    print('+ Total file in audio/:', getTotalFiles(DOWN_FOLDER))
 
 def printHelp():
     print()
@@ -146,6 +151,7 @@ def printHelp():
     print("$ export [all|index|playlist_name]\t: Export playlist from db (this is my api, mongodb cluster)")
     print()
     print('$ cls|clear\t\t\t\t: Clear screen')
+    print('$ usage\t\t\t\t\t: Get usage')
     print('$ help|h\t\t\t\t: Show this')
     print()
     print("$ delete|del [sID|range]1*\t\t: Delete song from downloaded, can delete many")

@@ -1,6 +1,7 @@
 from difflib import SequenceMatcher
 from re import search
 from emoji import get_emoji_regexp
+from pathlib import Path
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
@@ -39,3 +40,10 @@ def filename_from_path(path):
 # remove emoji in string
 def remove_emoji(text):
     return get_emoji_regexp().sub(u'', text)
+
+# calculate folder size
+def folder_size(path):
+    folder = Path(path)
+    size = sum(f.stat().st_size for f in folder.glob('**/*') if f.is_file())
+    # convert bytes to MB
+    return round(size / pow(1024, 2), 2)

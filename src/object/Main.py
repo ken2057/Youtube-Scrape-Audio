@@ -38,6 +38,7 @@ from src.formatPrint import (
     printSongQueue,
     printAllPlaylist,
     printSongSimple,
+    printUsage,
 )
 from src.audio import (
     downloadAudio, 
@@ -106,6 +107,7 @@ class Main():
             'login':            (lambda x: self._login()),
             'import':           (lambda x: self._import()),
             'export':           (lambda x: self._export(x[1:])),
+            'usage':            (lambda x: self._usage()),
         }   
 
     # play song with songInput
@@ -939,3 +941,6 @@ class Main():
         # reset when invalid username/password
         if 'Invalid' in result:
             self.user.reset_all()
+
+    def _usage(self):
+        printUsage()

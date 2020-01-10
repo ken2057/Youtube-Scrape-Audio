@@ -156,6 +156,7 @@ $ import                                : Import all playlist from db (this is m
 $ export [all|index|playlist_name]      : Export playlist from db (this is my api, mongodb cluster)
 
 $ cls|clear                             : Clear screen
+$ usage                                 : Get usage
 $ help|h                                : Show this
 
 $ delete|del <sID> [sID]*               : Delete song from downloaded, can delete many
