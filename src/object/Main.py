@@ -201,7 +201,7 @@ class Main():
         if input_ in listPl:
             index = listPl.index(input_)
             self.playlist['path'] = self.listPlaylist[index]
-            self.playlist['songs'] = readJson(self.listPlaylist[index])
+            self.playlist['songs'] = readJson(self.listPlaylist[index])['songs']
             return True
         else:
             listPl = [[x, str_similar(x, input_)] for x in listPl]
@@ -590,8 +590,7 @@ class Main():
                     print('Invalid value:', value)
         # song not play, play it
         if self.musicThread == None and self.song.queue != []:
-            self.playSong(self.song.queue[0])
-            self.song.queue = self.song.queue[1:]
+            self.playSong(self.song.queue.pop(0))
     
     # remove song in queue
     def _queue_remove(self, input_):
@@ -652,7 +651,6 @@ class Main():
                 self.playlist['songs'] = readJson(self.listPlaylist[int(input_[0])])['songs']
                 self.playlist['path'] = self.listPlaylist[int(input_[0])]
             except:
-                print(input_)
                 if not self.match_name_playlist(input_[0]):
                     return
         #
@@ -665,8 +663,7 @@ class Main():
 
         # song not play, play it
         if self.musicThread == None and self.song.queue != []:
-            self.playSong(self.song.queue[0])
-            self.song.queue = self.song.queue[1:]
+            self.playSong(self.song.queue.pop(0))
         else:
             self._next()
 
