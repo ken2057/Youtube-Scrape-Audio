@@ -162,7 +162,7 @@ class Main():
         try:
             _input = _input[0]
             self.playlist['path'] = self.listPlaylist[int(_input)]
-            self.playlist['songs'] = readJson(self.listPlaylist[int(_input)])
+            self.playlist['songs'] = readJson(self.listPlaylist[int(_input)])['songs']
             return True
         except:
             print('Invalid index')
