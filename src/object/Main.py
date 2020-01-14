@@ -803,7 +803,6 @@ class Main():
                             songAdd.append(s)
 
         print('Add song to playlist:', filename_from_path(self.playlist['path']))
-        print(songAdd)
         for song in songAdd:
             # check song not in playlist
             if (len([x for x in self.playlist['songs'] 
