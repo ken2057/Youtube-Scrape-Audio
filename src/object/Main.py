@@ -803,6 +803,7 @@ class Main():
                             songAdd.append(s)
 
         print('Add song to playlist:', filename_from_path(self.playlist['path']))
+        print(songAdd)
         for song in songAdd:
             # check song not in playlist
             if (len([x for x in self.playlist['songs'] 
@@ -860,7 +861,7 @@ class Main():
                 except:
                     print('Invalid index: ' + value)
             # remove song
-            for song in songRemove.sort(reverse=True):
+            for song in songRemove:
                 if song in self.playlist['songs']:
                     self.playlist['songs'].remove(song)
                     print('Removed: '+ song['title'])

@@ -53,6 +53,7 @@ ydl_opts = {
 # list error number will not print info
 ERROR_HIDE = [
     '[Errno 11001]', # No internet: Failed to establish a new connection
+    '[WinError 10060]', # Can't download webpage with youtube-dl
 ]
 
 # CMD LIST
