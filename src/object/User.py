@@ -11,6 +11,7 @@ class User():
         self.password = None
 
     def import_(self):
+        '''Import playlist from api'''
         if self.username == None:
             self.login_()
         params={'username': self.username, 'password': self.password}
@@ -18,6 +19,7 @@ class User():
         return json.loads(r.content)
 
     def export_(self, playlists):
+        '''Export playlist into api'''
         if self.username == None:
             self.login_()
 
@@ -34,6 +36,7 @@ class User():
         return json.loads(r.content)
 
     def login_(self):
+        '''Change username, password'''
         self.username = input('Username: ')
         self.password = getpass('Password: ')
 

@@ -26,9 +26,23 @@ class Song():
 	isShuffle = False
 
 	def is_skipable(self, second):
+		'''
+		Check time skipable
+		When time skip and current time song less then total time
+
+		second: int (second > 0)
+
+		'''
 		return self.time + second < calcTime(self.curSong['time'])
 	
 	def skip_time(self, second):
+		'''
+
+		Skip time (seconds)
+
+		second: int (second > 0)
+
+		'''
 		self.mixer.pause()
 		self.isEdit = True
 		self.time += second
@@ -38,16 +52,23 @@ class Song():
 		self.mixer.play(0, self.time*1.085) 
 
 	def prev_song(self):
+		'''Change to previous song'''
 		self.nextSong = copy(self.curSong)
 		self.curSong = copy(self.prevSong)
 		self.prevSong = {}
 	
 	def finish_song(self):
+		'''Change finish status'''
 		# self.time += 1 #missing 1s KEKW	
 		self.isFinish = True
 		self.isPlaying = False
 
 	def next_song(self):
+		'''
+		Set previous song equal current song
+		Set current song euqual next song
+		Fetch new song recommend
+		'''
 		if self.nextSong == {}:
 			self.select_nextSong()
 		self.prevSong = copy(self.curSong)
@@ -61,6 +82,13 @@ class Song():
 		thrFetchSong(self.curSong['id'])
 
 	def set_mixer(self, skip=False):
+		'''
+
+		Set pygame.mixer.song play song
+
+		skip: bool (use to print strong string)
+
+		'''
 		# when use cmd 'skip', download next song
 		self.curSong = downloadAudio(self.curSong)
 		self.reset_play_value()
@@ -78,7 +106,7 @@ class Song():
 			print('\n\n'+self.__str__()+'\n$ ', end='')
 
 	def down_next_song(self):
-		# played 70% of the song, download next song
+		'''Check played 70% of the song and download next song'''
 		flag = self.curSong != {}
 		flag2 = 'path' not in self.nextSong or self.nextSong == {}
 		if flag and flag2:
@@ -91,16 +119,19 @@ class Song():
 				thrDownload(self.nextSong)
 	
 	def pause_song(self):
+		'''Change to pause status and pause pygame.mixer.song'''
 		self.isPause = True
 		self.isPlaying = False
 		self.mixer.pause()
 	
 	def unpause_song(self):
+		'''Change status unpause and unpause pygame.mixer.song'''
 		self.isPause = False
 		self.isPlaying = True
 		self.mixer.unpause()  
 
 	def set_next_from_queue(self):
+		'''Set next song from queue'''
 		pos = 0
 		if self.isShuffle:
 			pos = randint(0, len(self.queue) - 1)
@@ -114,6 +145,13 @@ class Song():
 			self.curPlaylist = None
 
 	def select_nextSong(self):
+		'''
+		Select next song
+		+ is repeat song ?
+		+ from queue ?
+		+ song recommend ?
+		And next song much difference with current song and prev song (if not repeat)
+		'''
 		# current not playing
 		if self.curSong == {}:
 			return
@@ -151,22 +189,31 @@ class Song():
 					break
 	
 	def remove_queue(self):
+		'''Clear queue'''
 		self.queue = []
 		self.curPlaylist = None
 
-	# if current playlist add new song
-	# add it to queue
 	def add_song_playlist_queue(self, playlistName, song):
+		'''
+
+		If current playlist add new song add it to queue
+
+		playlistName: string
+		song: dict (i.e. {'id': 'a', 'path': 'b', ...})
+
+		'''
 		if self.curPlaylist == playlistName:
 			self.queue.append(song)
 
 	def reset_play_value(self):
+		'''Reset play status when change song'''
 		self.isPause = False
 		self.isFinish = False
 		self.isPlaying = True
 		self.time = 0
 
 	def reset_all(self):
+		'''Reset all value'''
 		self.isPlaying = False
 		self.isFinish = False
 		self.isPause = False

@@ -16,6 +16,14 @@ header={'accept-language':'en;q=0.9'}
 
 # cookie for better recommending
 def getCookie():
+    '''
+
+    Get cookie from cookie.txt
+    Use to improve song suggestion
+
+    return CookieJar | None
+
+    '''
     try:
         return cookiejar.MozillaCookieJar(COOKIE_PATH).cookie.load()
     except:
@@ -25,10 +33,19 @@ def getCookie():
 # list str will be trim from string
 # ------------------------------------------------------------------------------
 def listStrip(string):
-    # trim some space, tab, enter in head of str
+    '''Trim some space, tab, enter in head of str'''
     return str(string).strip(' \n\t\r')
 
 def isValidSong(song):
+    '''
+
+    Check song information is valid
+
+    song: dict
+
+    return None | song
+
+    '''
     if 'views' not in song:
         song['views'] = '?'
     # min max 5 key
@@ -62,7 +79,16 @@ def isValidSong(song):
     return song
 
 def singleSong(url, write_file=False):
-    from datetime import datetime
+    '''
+
+    Fetch song suggestion from url
+
+    url: string
+    write_file: bool (not write file when using thread)
+
+    return: list (song)
+
+    '''
     try:
         r = get(url, headers=header, cookies=getCookie()) 
         soups = BS(r.content, 'html.parser').find(id='watch7-sidebar-modules').find_all('a')
@@ -92,6 +118,15 @@ def singleSong(url, write_file=False):
         return []
 
 def fetchQuery(query):
+    '''
+
+    Fetch song from youtube search
+
+    query: string
+
+    return: list (song)
+
+    '''
     try:
         url = QUERY_URL + query.replace(' ', '+')
         r = get(url, headers=header, cookies=getCookie())

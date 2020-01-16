@@ -7,15 +7,18 @@ from src.utils import folder_size
 from src.io import getTotalFiles
 # ------------------------------------------------------------------------------
 def changeTitle(title):
+    '''Change promt title'''
     system("title "+'\"'+str(title)+'\"')
 
 def clearScreen():
+    '''Clear screen'''
     if platform.system() == 'Windows':
         system('cls')
     else:
         system('clear')
 
 def printMusicStatus(song):
+    '''Print music status'''
     if 'title' in song.curSong:
         print(song.__str__())
     else:
@@ -23,6 +26,16 @@ def printMusicStatus(song):
         changeTitle('Waitting song')
 
 def printSongs(listSong, page, totalPage, note=None):
+    '''
+
+    Print song with more line
+
+    listSong: list
+    note: string|None
+    page: int (current page)
+    totalPage: int
+
+    '''
     clearScreen()
     print('-'*20)
     for i, s in enumerate(listSong, 0):
@@ -42,6 +55,13 @@ def printSongs(listSong, page, totalPage, note=None):
         print(note)
 
 def printSongQueue(song):
+    '''
+
+    Print all song in queue
+
+    song: object(Song)
+
+    '''
     print('[x]', song.curSong['title'])
     songs = [song.nextSong] + song.queue
     for i, s in enumerate([x for x in songs if x != {}], 1):
@@ -49,6 +69,13 @@ def printSongQueue(song):
     print()
 
 def printAllPlaylist(allPl):
+    '''
+
+    Print all playlist exist
+
+    allPl: list (string)
+
+    '''
     clearScreen()
     # get file name only
 
@@ -63,6 +90,18 @@ def printSongSimple(
         showView=False, 
         title=None, note=None, 
         curPage=1, maxPage=1):
+    '''
+
+    Print song with simple style (1 line 1 song)
+
+    listSong: list
+    showView: bool (Show view of song)
+    title: string|None
+    note: string|None
+    curPage: int (current page)
+    maxPage: int (max page)
+
+    '''
     # if curPage > maxPage:
     #     return
     clearScreen()
@@ -91,10 +130,12 @@ def printSongSimple(
         print(note)
     
 def printUsage():
+    '''Print usage'''
     print('+ audio/ size: %s MB'%(folder_size(DOWN_FOLDER)))
     print('+ Total file in audio/:', getTotalFiles(DOWN_FOLDER))
 
 def printHelp():
+    '''Print help'''
     print()
     print('Help!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     print()

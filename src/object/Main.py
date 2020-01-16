@@ -110,8 +110,14 @@ class Main():
             'usage':            (lambda x: self._usage()),
         }   
 
-    # play song with songInput
     def playSong(self, songInput):
+        '''
+
+        Play song with songInput
+
+        songInput: dict (much have {'id': x})
+
+        '''
         # check song
         self.song.curSong = downloadAudio(songInput)
         # fetch next songs from page
@@ -125,6 +131,7 @@ class Main():
             self.song.set_mixer(True)
 
     def regexSongURL(self, string):
+        '''Get expresion by check youtube video ID'''
         # if match YT link and youtube id video length == 1
         # or length input == 11
         flag = string.startswith((BASE_URL, SHORT_URL))
@@ -133,11 +140,18 @@ class Main():
         return [(flag and lmd(ytID)) or lmd(string), ytID]
 
     def isPlaylistURL(self, string):
+        '''Check string is playlist url'''
         flag = string.startswith((BASE_URL))
         return flag and PLAYLIST_PARAM in string
 
     def get_play_cmd(self, sID=None):
-        # check last command used
+        '''
+
+        Play song based on last command used
+
+        sID: int
+
+        '''
         # if in ['songs', 'downs', 'search']
         # play song from that list
         play_cmd = {
@@ -152,6 +166,7 @@ class Main():
         return play_cmd[self.last_cmd]
 
     def select_playlist(self):
+        '''Select playlist and show playlist infomation'''
         printAllPlaylist(
             [filename_from_path(x) for x in self.listPlaylist]
         )
@@ -169,6 +184,7 @@ class Main():
             return False
 
     def input_range(self, input_):
+        '''Check from input is a range number and return range(min, max)'''
         lst = input_.split('-')
         if len(lst) != 2:
             return None
@@ -183,6 +199,7 @@ class Main():
                 return None
 
     def convert_int(self, input_, default=0):
+        '''Convert string to int, if fasle use default number'''
         try:
             page = int(input_[0]) - 1
             if page < 0:
@@ -191,10 +208,14 @@ class Main():
         except:
             return default
 
-    # this function will check input_ is a name of playlist
-    # if is a name, add playlist to self.playlist
-    # else print playlist name similar
     def match_name_playlist(self, input_):
+        '''
+
+        Check input_ is a name of playlist
+        If is a name, add playlist to self.playlist
+        Else print playlist name similar
+
+        '''
         # get all playlist name
         listPl = [filename_from_path(x) for x in self.listPlaylist]
          # when input name of playlist
@@ -214,8 +235,8 @@ class Main():
                         print('- ' + f)
         return False
 
-    # Call this function to run
     def _running(self):
+        '''Main running function'''
         self.running = True
         while self.running:
             print()
@@ -234,8 +255,8 @@ class Main():
             except Exception as ex:
                 writeErrorLog(ex, ' '.join(input_))
 
-    # delete all mp3, json
     def _delete_all(self):
+        '''Delete all mp3, json'''
         print('Delete all file in json, cookie and audio/')
         # confirm delete
         confirm = input('Confirm (y/N): ')
@@ -250,11 +271,12 @@ class Main():
         deleteAll(playlist=removePlaylist)
 
     def _clear(self):
+        '''Clear screen'''
         clearScreen()
         self.last_cmd = None
 
-    # show song recommended by YT
     def _songs(self, input_):
+        '''Show song recommended by YT'''
         page = self.convert_int(input_)
         # read json
         allSong = readJson()
@@ -280,8 +302,8 @@ class Main():
         # save last cmd 'songs'
         self.last_cmd = 'sg'
 
-    # show downoaded song
     def _downloaded(self, input_):
+        '''Show downoaded song'''
         page = self.convert_int(input_)
         self.downs = readJson(JSON_DOWNLOADED_PATH)
         # check file exist
@@ -314,8 +336,8 @@ class Main():
         )
         self.last_cmd = 'd'
 
-    # search song from scrape youtube
     def _search(self, string):
+        '''Search song from scrape youtube'''
         self.result = fetchQuery(string)[:SONG_PER_LIST]
         # printSongs(self.result, 0, 1, "Use 'play|p <sID>' to play")
         printSongSimple(
@@ -326,11 +348,15 @@ class Main():
         )
         self.last_cmd = 's'
 
-    # play song in songs/search/downloaded current page
     def _play(self, input_):
-        # first case 
-        # play: unpause
-        # play <sID>: play song
+        '''
+
+        Play song in songs/search/downloaded current page
+        With 2 case
+        + play: unpause
+        + play <sID>: play song
+
+        '''
         try:
             if len(input_) > 0:
                 # try check is play sID or play URL
@@ -355,9 +381,8 @@ class Main():
             else:
                 print('URL invalid')
 
-    # show current volume
-    # change volume with num
     def _volume(self, input_):
+        '''Show current volume or change volume with input number'''
         # print volume level    
         if (len(input_) == 0):
             print("Volume:", 
@@ -372,20 +397,20 @@ class Main():
             except:
                 print('Invalid volume value')
 
-    # play next song
     def _next(self):
+        '''Play next song'''
         self.song.select_nextSong()
         self.song.next_song()
         self.song.set_mixer(skip=True)
 
-    # show next song info
     def _next_info(self):
+        '''Show next song info'''
         self.song.select_nextSong()
         printSongs([self.song.nextSong], 0, 1, "Use 'next|n' to play")
         self.last_cmd = None
 
-    # skip num seconds of the song
     def _skip(self, input_):
+        '''Skip num seconds of the song'''
         if len(input_) == 0:
             second = input('Add total second want to skip: ')
         else:
@@ -400,61 +425,69 @@ class Main():
             else:
                 print('Skip failed')
 
-    # show current song info
     def _info(self):
+        '''Show current song info'''
         printSongs([self.song.curSong], 0, 1)
         self.last_cmd = None
 
-    # shot previous info
     def _prev_info(self):
+        '''Show previous info'''
         if self.song.prevSong != {}:
             printSongs([self.song.prevSong], 0, 1, "Use 'prev' to play")
             self.last_cmd = None
         else:
             print('Previous song: None')
 
-    # play previous song
     def _prev(self):
+        '''Play previous song'''
         if self.song.prevSong != {}:
             self.song.prev_song()
             self.song.set_mixer(skip=True)
         else:
             print('Previous song: None')
 
-    # stop
     def _exit(self):
+        '''Exit'''
         self.running = False
 
-    # play all song in downloaded
     def _play_down(self):
+        '''Play all song in downloaded'''
         self.songs = readJson(JSON_DOWNLOADED_PATH)
         self.song.queue = self.songs[1:]
         self.playSong(self.songs[0])
         self.song.curPlaylist = 'downloaded'
 
-    # show queue
     def _queue(self):
+        '''Show queue'''
         if self.song.queue != []:
             printSongQueue(self.song)
         else:
             print('Nothing in queue')
 
-    # turn on shuffle queue song
     def _queue_shuffle(self):
+        '''Turn on shuffle queue song'''
         self.song.isShuffle = not self.song.isShuffle
         _a = (lambda x: 'ON' if x else 'OFF')
         print('Queue shuffle:', _a(self.song.isShuffle))
 
-    # copy current song url to clipboard
     def _copy(self):
+        '''Copy current song url to clipboard'''
         if self.song.curSong != {}:
             copy(SHORT_URL + self.song.curSong['id'])
             print('Copied to clipboard')
         else:
             print('Nothing to copy')
 
-    # delete song from downloaded
     def _delete(self, input_):
+        '''
+        
+        Delete song from downloaded
+        
+        input_: string (multiable)
+            + Can be sID
+            + Can be range (i.e. 1-3)
+
+        '''
         if len(input_) == 0:
             print('Please add sID to delete')
             return
@@ -501,8 +534,17 @@ class Main():
         deleteSongs(listSong)
         self.song.isEdit = False
 
-    # repeat current song x time
     def _repeat(self, input_):
+        '''
+
+        Repeat current song x time
+
+        input_: int (nullable)
+            + If null: repeat forever
+            + If null and not set repeat => remove repeat
+            + If have x time: set repeat x time
+
+        '''
         # repeat song
         if self.song.repeatTime == 0:
             # repeat unlimit
@@ -520,8 +562,16 @@ class Main():
             self.song.nextSong = {}
         self.song.select_nextSong()
 
-    # set next song
     def _set_next(self, input_):
+        '''
+
+        Set next song
+
+        input_: string
+            + If sID: set next song from list
+            + If url or video ID: fetch song and set next song
+
+        '''
         if self.last_cmd != None and len(input_) > 0:
             try:
                 self.song.nextSong = self.get_play_cmd(int(input_[0]))
@@ -535,8 +585,17 @@ class Main():
         else:
             print('Nothing to set next')
     
-    # add song to queue
     def _queue_add(self, input_):
+        '''
+
+        Add song to queue
+
+        input_: string (multiable)
+            + If sID: add song from list with sID to queue
+            + If range: add song from list with range (i.e 1-4) to queue
+            + If url|song Id: fetch song from url and add to queue
+
+        '''
         # add all song in current page
         if len(input_) == 0:
             if self.last_cmd != None:
@@ -592,8 +651,17 @@ class Main():
         if self.musicThread == None and self.song.queue != []:
             self.playSong(self.song.queue.pop(0))
     
-    # remove song in queue
     def _queue_remove(self, input_):
+        '''
+
+        Remove song in queue
+
+        input_: null => remove all song in queue
+        input_: string (multiable)
+            + If sID: remove song in queue with sID
+            + If range: remove songs in range (i.e. 1-5)
+
+        '''
         # remove 1 song
         if len(input_) > 0:
             listsID = []
@@ -618,8 +686,18 @@ class Main():
             self.song.remove_queue()
             print('Queue removed')
     
-    # show all playlist, select playlist
     def _playlist(self, input_):
+        '''
+
+        Show all playlist, select playlist
+
+        input_: string
+            + If playlist index: show songs in playlist at index
+            + If playlist name: 
+                + Correct: show songs in playlist with name
+                + Incorrect: show name suggestion and re-input
+
+        '''
         # show all playlist
         self.listPlaylist = getFilesInFolder(PLAYLIST_FOLDER)
         if len(input_) == 0:
@@ -639,8 +717,18 @@ class Main():
             self.last_cmd = 'pl'
             self._playlist_info()
 
-    # play playlist
     def _play_playlist(self, input_):
+        '''
+
+        Play playlist
+
+        input_: string
+            + If playlist index: play playlist at index
+            + If playlist name:
+                + Correct: play playlist
+                + Incorrect: show name suggestion
+
+        '''
         # play current selected playlist
         if len(input_) == 0 and self.playlist['path'] == '':
             print('Please select playlist')
@@ -667,8 +755,15 @@ class Main():
         else:
             self._next()
 
-    # create new empty playlist
     def _new_playlist(self, input_):
+        '''
+
+        Create new empty playlist
+
+        input_: null => Get playlist name
+        input_: string (name playlist)
+
+        '''
         if len(input_) == 0:
             name = input("Input name new playlist ('.c' to cancel): ")
             if name == '.c':
@@ -685,8 +780,18 @@ class Main():
         else:
             print('Failed create playlist')
 
-    # rename playlist
     def _rename_playlist(self, input_):
+        '''
+
+        Rename playlist
+        If non-playlist selected => Error
+        
+        input_: null => Get new name
+        input_: string
+
+        Check name valid => Rename
+
+        '''
         if self.playlist['path'] == None:
             print('Please select playlist')
             return
@@ -712,8 +817,16 @@ class Main():
         else:
             print('Rename failed')
 
-    # delete song in playlist
     def _del_playlist(self, input_):
+        '''
+
+        Delete playlist
+
+        input_: string (multiable)
+            + Playlist index
+            + Playlist name
+
+        '''
         # delete multi-playlist
         if len(input_) > 0:
             for index in input_:
@@ -740,8 +853,17 @@ class Main():
         self.playlist = {'path': None, 'songs': []}
         print('Deleted')
             
-    # add song to playlist
     def _playlist_add(self, input_):
+        '''
+
+        Add song to playlist
+
+        input_: string
+            + sID
+            + url|song ID
+            + range (i.e. 1-3)
+
+        '''
         if self.playlist['path'] == None:
             if not self.select_playlist():
                 return
@@ -826,8 +948,17 @@ class Main():
             data['songs'] = self.playlist['songs']
             writeJson(data, self.playlist['path'])
 
-    # remove song in playlist
     def _playlist_remove(self, input_):
+        '''
+
+        Remove song in playlist
+
+        input_: string
+            + sID
+            + range (i.e. 1-3)
+            + 'all': remove all song in playlist
+
+        '''
         if self.playlist['path'] == None:
             if not self.select_playlist():
                 return 
@@ -871,6 +1002,7 @@ class Main():
             writeJson(data, self.playlist['path'])
 
     def _playlist_info(self):
+        '''Show all song in playlist'''
         self.playlist['songs'] = readJson(self.playlist['path'])['songs']
         notes = []
         notes.append("Use 'ppl' to play playlist")
@@ -882,9 +1014,11 @@ class Main():
         )
         
     def _login(self):
+        '''Change username and password'''
         self.user.login_()
 
     def _import(self):
+        '''Import playlist from username'''
         result = self.user.import_()
         if isinstance(result, dict):
             createImportPlaylist(result['playlists'])
@@ -895,6 +1029,7 @@ class Main():
                 self.user.reset_all()
     
     def _export(self, input_):
+        '''Export playlist to usename'''
         exportPL = []
         # export current playlist
         if len(input_) == 0:
@@ -940,4 +1075,5 @@ class Main():
             self.user.reset_all()
 
     def _usage(self):
+        '''Print some useage'''
         printUsage()

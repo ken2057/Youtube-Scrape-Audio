@@ -18,28 +18,66 @@ from src.config import (
 # -----------------------------------------------------------------------------
 # READ
 # -----------------------------------------------------------------------------
-# default get list next song
 def readJson(path=JSON_NAME_PATH):
+    '''
+    
+    Read json file (default get list next song)
+
+    path: string
+
+    return: dict
+
+    '''
     with open(path, 'r', encoding='utf8') as j:
         return load(j)
 # -----------------------------------------------------------------------------
 # WRITE
 # -----------------------------------------------------------------------------
 def writeJson(data, path):
+    '''
+
+    Write data to json
+
+    data: dict
+    path: string
+
+    '''
     with open(path, 'w', encoding='utf8') as j:
         dump(data, j, ensure_ascii=True)
 
 def writeDownloaded(song):
+    '''
+
+    Write song recent downloaded to downloaded.json
+
+    song: dict
+
+    '''
     listSong = readJson(JSON_DOWNLOADED_PATH)
     listSong.append(song)
     writeJson(listSong, JSON_DOWNLOADED_PATH)
 
-
 def writeNext(string, path):
+    '''
+
+    Write next line of file
+
+    string: string
+    path: path
+
+    '''
     with open(path, 'a', encoding='utf8') as f:
         f.writelines(string + '\n')
 
 def writeErrorLog(error, data=None):
+    '''
+
+    Write error to error.log
+
+    error: Exception
+    data: string|None
+
+    '''
     note = []
     note.append('Time: ' + datetime.now().__str__())
     if data != None:
@@ -54,22 +92,44 @@ def writeErrorLog(error, data=None):
         logging.error('\n'+str(error))
     
 def getFilesInFolder(path):
+    '''
+
+    Get all file in path
+
+    path:string
+
+    return: list (string)
+
+    '''
     return [x.replace('\\', '/') for x in glob(path+'*')]
 
 # -----------------------------------------------------------------------------
 # OTHER
 # -----------------------------------------------------------------------------
 def updateConfig(newData):
+    '''
+
+    Update config
+
+    newData: dict
+
+    '''
     data = readJson(JSON_MCONFIG_PATH)
     data.update(newData)
     writeJson(data, JSON_MCONFIG_PATH)
 
-# delete file
 def deleteFile(path):
+    '''Remove file in path'''
     remove(path)
 
-# delete songs in downloaded
 def deleteSongs(songs):
+    '''
+
+    Delete songs in downloaded.json
+
+    songs: list (song)
+
+    '''
     try:
         data = readJson(JSON_DOWNLOADED_PATH)
         
@@ -84,6 +144,13 @@ def deleteSongs(songs):
         writeErrorLog(ex)
 
 def deleteAll(playlist=False):
+    '''
+
+    Delete all file in mp3, json, playlist (optional)
+
+    playlist: bool
+
+    '''
     files = glob(DOWN_FOLDER+'/*')
     print('Deleting '+str(len(files))+' files in audio/')
     for f in files:
@@ -109,17 +176,36 @@ def deleteAll(playlist=False):
     print('Done')
 
 def getInDownloaded(song):
+    '''
+
+    Check song exist in downloaded.json
+
+    song: dict
+
+    return: dict
+
+    '''
     for s in readJson(JSON_DOWNLOADED_PATH):
         if song['id'] == s['id']:
             return s
     return song
 
 def getTotalFiles(path):
+    '''Get total file in path'''
     return len(glob(path+'/*'))
 # -----------------------------------------------------------------------------
 # PLAYLIST
 # -----------------------------------------------------------------------------
 def createPlaylist(name):
+    '''
+
+    Create new playlist with name
+
+    name: string
+
+    return: bool
+
+    '''
     pathFile = PLAYLIST_FOLDER + name + '.json'
     # check exists file
     if path.exists(pathFile):
@@ -129,6 +215,16 @@ def createPlaylist(name):
     return True
 
 def renamePlaylist(plPath, newName):
+    '''
+
+    Rename playlist
+
+    plPath: string (playlist path)
+    newName: string
+
+    return: string (newPath) | False
+
+    '''
     # check exists path
     if not path.exists(plPath):
         print('Playlist not exists')
@@ -143,6 +239,13 @@ def renamePlaylist(plPath, newName):
     return new_path
 
 def createImportPlaylist(playlists):
+    '''
+
+    Create playlist when import from server
+
+    playlists: list (playlist: dict)
+
+    '''
     for pl in playlists:
         try:
             pathFile = PLAYLIST_FOLDER + pl['name'] + '.json'
